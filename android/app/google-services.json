@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "25552045564",
+    "project_id": "hiive-7a484",
+    "storage_bucket": "hiive-7a484.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25552045564:android:0d3c00a4dedd9fb9691e79",
+        "android_client_info": {
+          "package_name": "com.example.hiiverider"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsmZz1haSuniw0fOuguFLUQSGvx2ihFP0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25552045564:android:6b586b7b969dccd8691e79",
+        "android_client_info": {
+          "package_name": "com.example.hiiveuser"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsmZz1haSuniw0fOuguFLUQSGvx2ihFP0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
