@@ -49,7 +49,7 @@ class _CartScreenState extends State<CartScreen> {
           child: FloatingActionButton.extended(
             heroTag: 'btn2',
             label: const Text('Clear Cart'),
-            backgroundColor: Colors.cyan,
+            backgroundColor: Colors.amber,
             icon: const Icon(Icons.clear_all),
             onPressed: (() {
               clearCartNow(context);
@@ -67,7 +67,7 @@ class _CartScreenState extends State<CartScreen> {
               'Check Out',
               style: TextStyle(fontSize: 16),
             ),
-            backgroundColor: Colors.cyan,
+            backgroundColor: Colors.amber,
             icon: const Icon(Icons.navigate_next),
             onPressed: (() {
               Navigator.push(

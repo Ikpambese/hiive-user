@@ -23,7 +23,7 @@ class _MyAppBarState extends State<MyAppBar> {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0.0,
-      iconTheme: const IconThemeData(color: Colors.cyan),
+      iconTheme: const IconThemeData(color: Colors.amber),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: () {
@@ -42,7 +42,7 @@ class _MyAppBarState extends State<MyAppBar> {
             IconButton(
               icon: const Icon(
                 Icons.shopping_cart,
-                color: Colors.cyan,
+                color: Colors.amber,
               ),
               onPressed: () {
                 //send user to cart screen

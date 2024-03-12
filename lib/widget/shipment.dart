@@ -77,7 +77,7 @@ class ShipmentAddressDesign extends StatelessWidget {
                         gradient: LinearGradient(
                       colors: [
                         Colors.black,
-                        Colors.cyan,
+                        Colors.amber,
                       ],
                       begin: FractionalOffset(0.0, 0.0),
                       end: FractionalOffset(1.0, 0.0),
@@ -112,7 +112,7 @@ class ShipmentAddressDesign extends StatelessWidget {
                     decoration: const BoxDecoration(
                         gradient: LinearGradient(
                       colors: [
-                        Colors.cyan,
+                        Colors.amber,
                         Colors.black,
                       ],
                       begin: FractionalOffset(0.0, 0.0),

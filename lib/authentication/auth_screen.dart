@@ -21,7 +21,7 @@ class _AuthScreenState extends State<AuthScreen> {
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.cyan,
+                  Colors.black,
                   Colors.amber,
                 ],
                 begin: FractionalOffset(0.0, 0.0),
@@ -35,7 +35,7 @@ class _AuthScreenState extends State<AuthScreen> {
           title: const Text(
             'Hiive',
             style: TextStyle(
-                fontFamily: 'Train', fontSize: 60, color: Colors.white),
+                fontFamily: 'Acme', fontSize: 60, color: Colors.white),
           ),
           centerTitle: true,
           bottom: const TabBar(
@@ -64,7 +64,7 @@ class _AuthScreenState extends State<AuthScreen> {
             gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
-              colors: [Colors.amber, Colors.cyan],
+              colors: [Colors.amber, Colors.black],
             ),
           ),
           child: const TabBarView(children: [

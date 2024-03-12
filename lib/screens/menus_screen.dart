@@ -29,7 +29,7 @@ class _MenusScreenState extends State<MenusScreen> {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.cyan,
+                Colors.amber,
                 Colors.amber,
               ],
               begin: FractionalOffset(0.0, 0.0),

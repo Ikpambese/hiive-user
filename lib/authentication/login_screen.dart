@@ -20,7 +20,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  // bool isFinished = true;
+  bool isFinished = false;
   // FORM COONTROLLERS
 
   TextEditingController emailController = TextEditingController();
@@ -171,7 +172,38 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
-          const SizedBox(height: 30),
+          // const SizedBox(height: 30),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          //   child: SwipeableButtonView(
+          //     buttonText: 'SLIDE TO PAY',
+          //     buttonWidget: Container(
+          //       child: const Icon(
+          //         Icons.arrow_forward_ios_rounded,
+          //         color: Colors.grey,
+          //       ),
+          //     ),
+          //     activeColor: Color(0xFF009C41),
+          //     isFinished: isFinished,
+          //     onWaitingProcess: () {
+          //       Future.delayed(const Duration(seconds: 2), () {
+          //         setState(() {
+          //           isFinished = true;
+          //         });
+          //       });
+          //     },
+          //     onFinish: () async {
+          //       bool isOk = await formValidation();
+
+          //       //TODO: For reverse ripple effect animation
+          //       setState(() {
+          //         isFinished = false;
+          //       });
+          //     },
+          //   ),
+          // ),
+
+          // const SizedBox(height: 30),
         ],
       ),
     );

@@ -79,11 +79,11 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text(
           'Hiive',
           style: TextStyle(
-              fontSize: 40, fontFamily: 'Signatra', color: Colors.cyan),
+              fontSize: 40, fontFamily: 'Signatra', color: Colors.amber),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
-        iconTheme: const IconThemeData(color: Colors.cyan),
+        iconTheme: const IconThemeData(color: Colors.amber),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 10, top: 5),
@@ -135,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Container(
                             height: 150,
                             decoration: const BoxDecoration(
-                                color: Colors.cyan,
+                                color: Colors.amber,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10))),
                             width: MediaQuery.of(context).size.width,
@@ -173,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   sharedPreferences!.getString('name')!.toUpperCase(),
                   style: const TextStyle(
-                      color: Colors.cyan,
+                      color: Colors.amber,
                       fontWeight: FontWeight.bold,
                       fontSize: 20),
                 ),
@@ -186,14 +186,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       'Select Kitchen',
                       style: TextStyle(
-                          color: Colors.cyan,
+                          color: Colors.amber,
                           fontWeight: FontWeight.bold,
                           fontSize: 15),
                     ),
                     Text(
                       '....',
                       style: TextStyle(
-                          color: Colors.cyan,
+                          color: Colors.amber,
                           fontWeight: FontWeight.bold,
                           fontSize: 20),
                     )

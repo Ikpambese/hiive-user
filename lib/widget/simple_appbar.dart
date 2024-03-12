@@ -17,7 +17,7 @@ class SimpleAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      iconTheme: const IconThemeData(color: Colors.cyan),
+      iconTheme: const IconThemeData(color: Colors.amber),
       elevation: 0,
       backgroundColor: Colors.transparent,
       centerTitle: true,
@@ -27,7 +27,7 @@ class SimpleAppBar extends StatelessWidget implements PreferredSizeWidget {
             fontSize: 45,
             fontFamily: 'Signatra',
             letterSpacing: 3,
-            color: Colors.cyan),
+            color: Colors.amber),
       ),
 
       // automaticallyImplyLeading: false,

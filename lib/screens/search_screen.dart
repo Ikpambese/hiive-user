@@ -25,7 +25,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(
-          color: Colors.cyan,
+          color: Colors.amber,
         ),
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -51,7 +51,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 children: [
                   const Icon(
                     CupertinoIcons.search,
-                    color: Colors.cyan,
+                    color: Colors.amber,
                   ),
                   Expanded(
                     child: Container(
@@ -68,7 +68,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           },
                           decoration: InputDecoration(
                             hintText: 'Search Restaurant Here',
-                            hintStyle: const TextStyle(color: Colors.cyan),
+                            hintStyle: const TextStyle(color: Colors.amber),
                             border: InputBorder.none,
                             suffixIcon: IconButton(
                               onPressed: () {
@@ -76,7 +76,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               },
                               icon: const Icon(
                                 Icons.filter_list,
-                                color: Colors.cyan,
+                                color: Colors.amber,
                               ),
                             ),
                           ),
@@ -142,7 +142,7 @@ class _SearchScreenState extends State<SearchScreen> {
 //                   child: Row(children: [
 //                     const Icon(
 //                       CupertinoIcons.search,
-//                       color: Colors.cyan,
+//                       color: Colors.amber,
 //                     ),
 //                     Expanded(
 //                       child: Container(

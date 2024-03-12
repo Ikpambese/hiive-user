@@ -44,7 +44,7 @@ class MyDrawer extends StatelessWidget {
                       )!
                       .toUpperCase(),
                   style: const TextStyle(
-                      color: Colors.cyan,
+                      color: Colors.amber,
                       fontSize: 28,
                       fontFamily: 'Kiwi',
                       letterSpacing: 2),
@@ -69,7 +69,7 @@ class MyDrawer extends StatelessWidget {
                   title: const Text(
                     'Home',
                     style: TextStyle(
-                      color: Colors.cyan,
+                      color: Colors.amber,
                       fontFamily: 'Acme',
                       fontSize: 30,
                       letterSpacing: 3,
@@ -82,11 +82,11 @@ class MyDrawer extends StatelessWidget {
                 ),
                 const Divider(height: 10, color: Colors.grey, thickness: 2),
                 ListTile(
-                  leading: const Icon(Icons.reorder, color: Colors.cyan),
+                  leading: const Icon(Icons.reorder, color: Colors.amber),
                   title: const Text(
                     'My Order',
                     style: TextStyle(
-                      color: Colors.cyan,
+                      color: Colors.amber,
                       fontFamily: 'Acme',
                       fontSize: 30,
                       letterSpacing: 3,
@@ -101,11 +101,11 @@ class MyDrawer extends StatelessWidget {
                 ),
                 const Divider(height: 10, color: Colors.grey, thickness: 2),
                 ListTile(
-                  leading: const Icon(Icons.access_time, color: Colors.cyan),
+                  leading: const Icon(Icons.access_time, color: Colors.amber),
                   title: const Text(
                     'History',
                     style: TextStyle(
-                      color: Colors.cyan,
+                      color: Colors.amber,
                       fontFamily: 'Acme',
                       fontSize: 30,
                       letterSpacing: 3,
@@ -120,11 +120,11 @@ class MyDrawer extends StatelessWidget {
                 ),
                 const Divider(height: 10, color: Colors.grey, thickness: 2),
                 ListTile(
-                  leading: const Icon(Icons.search, color: Colors.cyan),
+                  leading: const Icon(Icons.search, color: Colors.amber),
                   title: const Text(
                     'Search',
                     style: TextStyle(
-                      color: Colors.cyan,
+                      color: Colors.amber,
                       fontFamily: 'Acme',
                       fontSize: 30,
                       letterSpacing: 3,
@@ -141,11 +141,11 @@ class MyDrawer extends StatelessWidget {
                 ),
                 const Divider(height: 10, color: Colors.grey, thickness: 2),
                 ListTile(
-                  leading: const Icon(Icons.add_location, color: Colors.cyan),
+                  leading: const Icon(Icons.add_location, color: Colors.amber),
                   title: const Text(
                     'Add New Address',
                     style: TextStyle(
-                      color: Colors.cyan,
+                      color: Colors.amber,
                       fontFamily: 'Acme',
                       fontSize: 30,
                       letterSpacing: 3,
@@ -160,11 +160,11 @@ class MyDrawer extends StatelessWidget {
                 ),
                 const Divider(height: 10, color: Colors.grey, thickness: 2),
                 ListTile(
-                  leading: const Icon(Icons.exit_to_app, color: Colors.cyan),
+                  leading: const Icon(Icons.exit_to_app, color: Colors.amber),
                   title: const Text(
                     'Sign Out',
                     style: TextStyle(
-                      color: Colors.cyan,
+                      color: Colors.amber,
                       fontFamily: 'Acme',
                       fontSize: 30,
                       letterSpacing: 3,

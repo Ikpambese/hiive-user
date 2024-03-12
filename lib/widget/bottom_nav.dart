@@ -21,7 +21,7 @@ class ButtomNav extends StatelessWidget {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const HomeScreen()));
             },
-            icon: Icon(Icons.home, color: Colors.cyan),
+            icon: Icon(Icons.home, color: Colors.amber),
           )),
         ),
         ClipOval(
@@ -31,7 +31,7 @@ class ButtomNav extends StatelessWidget {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => AddressScreen()));
             },
-            icon: Icon(Icons.pin_drop, color: Colors.cyan),
+            icon: Icon(Icons.pin_drop, color: Colors.amber),
           )),
         ),
         ClipOval(
@@ -41,7 +41,7 @@ class ButtomNav extends StatelessWidget {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => MyOrdersScreen()));
             },
-            icon: Icon(Icons.shopify_rounded, color: Colors.cyan),
+            icon: Icon(Icons.shopify_rounded, color: Colors.amber),
           )),
         ),
       ],

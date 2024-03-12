@@ -36,7 +36,7 @@ class _AddressDesignState extends State<AddressDesign> {
             .displayResults(widget.value);
       },
       child: Card(
-        color: Colors.cyan.withOpacity(0.4),
+        color: Colors.amber.withOpacity(0.4),
         child: Column(
           children: [
             Row(

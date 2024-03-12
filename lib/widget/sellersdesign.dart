@@ -68,7 +68,7 @@ class _SellersDesignState extends State<SellersDesign> {
                   ClipOval(
                     child: Container(
                       padding: const EdgeInsets.all(10),
-                      color: Colors.cyan,
+                      color: Colors.amber,
                       child: const Icon(
                         Icons.restaurant_menu,
                         size: 30,

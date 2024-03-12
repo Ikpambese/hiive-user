@@ -11,6 +11,7 @@ import '../global/global.dart';
 import '../models/address.dart';
 import '../widget/address_design.dart';
 import '../widget/progress_bar.dart';
+import '../widget/simple_appbar.dart';
 
 class AddressScreen extends StatefulWidget {
   final double? totalAmount;
@@ -33,12 +34,12 @@ class _AddressScreenState extends State<AddressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: SimpleAppBar(
-      //   title: 'LunchBox',
-      // ),
+      appBar: SimpleAppBar(
+        title: 'LunchBox',
+      ),
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.add_location),
-        backgroundColor: Colors.cyan,
+        backgroundColor: Colors.amber,
         label: const Text('add new Address'),
         onPressed: () {
           Navigator.push(

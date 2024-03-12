@@ -52,7 +52,7 @@ class _MenusDesignWidgetState extends State<MenusDesignWidget> {
               Text(
                 widget.model!.menuTitle!,
                 style: const TextStyle(
-                  color: Colors.cyan,
+                  color: Colors.amber,
                   fontSize: 20,
                   fontFamily: "Train",
                 ),

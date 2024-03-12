@@ -43,22 +43,22 @@ class _MySplashScreenState extends State<MySplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: Colors.black,
       child: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Image.asset('images/welcome.png'),
+          Image.asset('images/honeycomb.png'),
           const SizedBox(
-            height: 10,
+            height: 20,
           ),
           const Padding(
             padding: EdgeInsets.all(10.0),
             child: Text(
-              'Order food online with Afoodie',
+              'Hiive',
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 40,
                   fontFamily: 'Train',
-                  color: Colors.black54,
+                  color: Colors.amber,
                   letterSpacing: 3),
             ),
           )

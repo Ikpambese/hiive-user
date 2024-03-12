@@ -17,7 +17,7 @@ class _CartItemDesignState extends State<CartItemDesign> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      splashColor: Colors.cyan,
+      splashColor: Colors.amber,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SizedBox(

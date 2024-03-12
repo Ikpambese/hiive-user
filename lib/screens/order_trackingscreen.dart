@@ -53,7 +53,7 @@
 //     const step.Step(
 //       shimmer: false,
 //       title: 'Order packed',
-//       iconStyle: Colors.cyan,
+//       iconStyle: Colors.amber,
 //       content: Padding(
 //         padding: EdgeInsets.only(left: 5),
 //         child: Align(
@@ -110,7 +110,7 @@
 //     const step.Step(
 //       shimmer: false,
 //       title: 'Rider underway',
-//       iconStyle: Colors.cyan,
+//       iconStyle: Colors.amber,
 //       content: Align(
 //         alignment: Alignment.centerLeft,
 //         child: Text('3/3/2023 11:25 Parcel Sorted'),
@@ -262,7 +262,7 @@
 //               const SizedBox(width: 10),
 //               const Icon(
 //                 Icons.search,
-//                 color: Colors.cyan,
+//                 color: Colors.amber,
 //                 size: 40,
 //               ),
 //             ],

@@ -54,6 +54,9 @@ dependencies:
   # vertical_stepper: ^0.0.1
   flutter_paystack: ^1.0.7
   another_stepper: ^1.2.2
+  swipeable_button_view: ^0.0.2
+  page_transition: ^2.1.0
+  
 
 dev_dependencies:
   flutter_test:
