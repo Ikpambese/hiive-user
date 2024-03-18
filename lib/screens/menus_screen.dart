@@ -48,7 +48,7 @@ class _MenusScreenState extends State<MenusScreen> {
             },
             icon: Icon(Icons.arrow_back)),
         title: const Text(
-          'LuncBox',
+          'Hiive',
           style: TextStyle(fontSize: 45, fontFamily: 'Acme'),
         ),
         centerTitle: true,
@@ -77,7 +77,7 @@ class _MenusScreenState extends State<MenusScreen> {
                       child: Center(child: CircularProgressIndicator()),
                     )
                   : SliverStaggeredGrid.countBuilder(
-                      crossAxisCount: 1,
+                      crossAxisCount: 2,
                       staggeredTileBuilder: (c) => const StaggeredTile.fit(1),
                       itemBuilder: ((context, index) {
                         Menus model = Menus.fromJson(snapshot.data?.docs[index]

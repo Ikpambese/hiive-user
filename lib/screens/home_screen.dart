@@ -61,19 +61,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomAppBar(
-        child: Container(
-          padding: const EdgeInsets.only(bottom: 20),
-          decoration: BoxDecoration(color: Colors.white, boxShadow: [
-            BoxShadow(
-              blurRadius: 20,
-              color: Colors.black.withOpacity(0.2),
-              offset: Offset.zero,
-            )
-          ]),
-          height: 100,
-          child: const ButtomNav(),
-        ),
+      bottomNavigationBar: const BottomAppBar(
+        child: ButtomNav(),
       ),
       appBar: AppBar(
         title: const Text(
@@ -156,31 +145,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
               child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
+            padding: EdgeInsets.only(left: 20, right: 20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Hello,',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15),
-                ),
-                Text(
-                  sharedPreferences!.getString('name')!.toUpperCase(),
-                  style: const TextStyle(
-                      color: Colors.amber,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
@@ -206,9 +178,6 @@ class _HomeScreenState extends State<HomeScreen> {
             stream:
                 FirebaseFirestore.instance.collection("sellers").snapshots(),
             builder: (context, snapshot) {
-              print("FETCHING DATA IF AVAILABLE+++++++++++++++++");
-              print(snapshot.data?.docs);
-              print("GOT DATA IF AVAILABLE+++++++++++++++++");
               return !snapshot.hasData
                   ? SliverToBoxAdapter(
                       child: Center(

@@ -13,17 +13,17 @@ class TextWidget extends SliverPersistentHeaderDelegate {
         width: MediaQuery.of(context).size.width,
         alignment: Alignment.center,
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.amber,
-              Colors.amber,
-            ],
-            begin: FractionalOffset(0.0, 0.0),
-            end: FractionalOffset(1.0, 0.0),
-            stops: [0.0, 1.0],
-            tileMode: TileMode.clamp,
-          ),
-        ),
+            // gradient: LinearGradient(
+            //   colors: [
+            //     Colors.amber,
+            //     Colors.amber,
+            //   ],
+            //   begin: FractionalOffset(0.0, 0.0),
+            //   end: FractionalOffset(1.0, 0.0),
+            //   stops: [0.0, 1.0],
+            //   tileMode: TileMode.clamp,
+            // ),
+            ),
         child: InkWell(
           child: Text(
             title!,

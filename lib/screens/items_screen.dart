@@ -46,7 +46,7 @@ class _ItemsScrennState extends State<ItemsScrenn> {
                       child: Center(child: CircularProgressIndicator()),
                     )
                   : SliverStaggeredGrid.countBuilder(
-                      crossAxisCount: 1,
+                      crossAxisCount: 2,
                       staggeredTileBuilder: (c) => const StaggeredTile.fit(1),
                       itemBuilder: ((context, index) {
                         Items model = Items.fromJson(snapshot.data!.docs[index]

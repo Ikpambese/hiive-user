@@ -12,6 +12,7 @@ import 'splash/splash_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // initailize local data for use
+
   sharedPreferences = await SharedPreferences.getInstance();
   await Firebase.initializeApp();
   runApp(const MyApp());
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (c) => AddressChanger()),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Seller App',
         theme: ThemeData(
           primarySwatch: Colors.blue,

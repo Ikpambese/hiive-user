@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable, library_private_types_in_public_api
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../models/menu_model.dart';
@@ -29,48 +30,42 @@ class _MenusDesignWidgetState extends State<MenusDesignWidget> {
         );
       },
       splashColor: Colors.amber,
-      child: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: SizedBox(
-          height: 280,
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            children: [
-              Divider(
-                height: 4,
-                thickness: 3,
-                color: Colors.grey[300],
-              ),
-              Image.network(
-                widget.model!.thumbnailUrl!,
-                height: 210.0,
-                fit: BoxFit.cover,
-              ),
-              const SizedBox(
-                height: 1.0,
-              ),
-              Text(
-                widget.model!.menuTitle!,
-                style: const TextStyle(
-                  color: Colors.amber,
-                  fontSize: 20,
-                  fontFamily: "Train",
-                ),
-              ),
-              Text(
-                widget.model!.menuInfo!,
-                style: const TextStyle(
+      child: Container(
+        child: Column(
+          children: [
+            ClipOval(
+              child: CachedNetworkImage(
+                imageUrl: widget
+                    .model!.thumbnailUrl!, // Replace with your actual image URL
+                placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(
                   color: Colors.grey,
-                  fontSize: 12,
+                )), // Placeholder while the image is loading
+                errorWidget: (context, url, error) => const Icon(
+                    Icons.error), // Widget to display if an error occurs
+                fit: BoxFit.cover,
+                height: 100,
+                width: 100,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Column(
+              children: [
+                Text(
+                  widget.model!.menuTitle!,
+                  style: const TextStyle(
+                    color: Colors.amber,
+                  ),
                 ),
-              ),
-              Divider(
-                height: 4,
-                thickness: 3,
-                color: Colors.grey[300],
-              ),
-            ],
-          ),
+                Text(
+                  widget.model!.menuInfo!,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            )
+          ],
         ),
       ),
     );
