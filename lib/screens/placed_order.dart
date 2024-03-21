@@ -80,6 +80,11 @@ class _PlacedOrderScreenState extends State<PlacedOrderScreen> {
   }
 
   @override
+  void initState() {
+    addOrderDetails();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Material(
       child: Container(
@@ -112,7 +117,7 @@ class _PlacedOrderScreenState extends State<PlacedOrderScreen> {
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   padding: const EdgeInsets.all(14)),
-              child: const Text('Place order'),
+              child: const Text('Oya send my oders'),
             )
           ],
         ),

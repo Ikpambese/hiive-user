@@ -17,9 +17,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        // appBar: SimpleAppBar(
-        //   title: "History",
-        // ),
+        appBar: SimpleAppBar(
+          title: "History",
+        ),
         body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection("users")

@@ -7,6 +7,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import '../global/global.dart';
 import '../models/address.dart';
+import '../widget/simple_appbar.dart';
 import '../widget/text_field.dart';
 
 class SaveAddressScreen extends StatelessWidget {
@@ -48,9 +49,9 @@ class SaveAddressScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: SimpleAppBar(
-      //   title: 'LunchBox',
-      // ),
+      appBar: SimpleAppBar(
+        title: 'Hiive',
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: (() {
           // save address info

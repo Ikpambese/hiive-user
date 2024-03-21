@@ -60,6 +60,9 @@ dependencies:
   circular_reveal_animation: ^2.0.1
   auto_size_text: ^3.0.0
   cached_network_image: ^3.3.0
+  flutterwave_standard: ^1.0.7
+  uuid: ^4.3.3
+  
   
 
 dev_dependencies:

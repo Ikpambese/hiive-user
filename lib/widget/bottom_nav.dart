@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hiiveuser/screens/search_screen.dart';
 
 import '../screens/address.dart';
 import '../screens/home_screen.dart';
@@ -40,21 +41,33 @@ class ButtomNav extends StatelessWidget {
           ),
           ClipOval(
             child: Material(
-                color: Colors.amber,
                 child: IconButton(
-                  splashColor: Colors.grey[100],
-                  highlightColor: Colors.grey[100],
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AddressScreen()));
-                  },
-                  icon: const Icon(
-                    Icons.pin_drop,
-                    color: Colors.amber,
-                  ),
-                )),
+              splashColor: Colors.grey[100],
+              highlightColor: Colors.grey[100],
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SearchScreen()));
+              },
+              icon: const Icon(
+                Icons.search,
+                color: Colors.amber,
+              ),
+            )),
+          ),
+          ClipOval(
+            child: Material(
+                child: IconButton(
+              splashColor: Colors.grey[100],
+              highlightColor: Colors.grey[100],
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AddressScreen()));
+              },
+              icon: const Icon(
+                Icons.pin_drop,
+                color: Colors.amber,
+              ),
+            )),
           ),
           ClipOval(
             child: Material(

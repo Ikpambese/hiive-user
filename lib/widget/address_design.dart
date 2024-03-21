@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hiiveuser/global/global.dart';
 
 import 'package:provider/provider.dart';
 
 import '../assistants/address_changer.dart';
 import '../maps/maps.dart';
 import '../models/address.dart';
+import '../payment/flutterwave_payment.dart';
 import '../screens/placed_order.dart';
 
 class AddressDesign extends StatefulWidget {
@@ -138,17 +140,22 @@ class _AddressDesignState extends State<AddressDesign> {
             widget.value == Provider.of<AddressChanger>(context).count
                 ? ElevatedButton(
                     onPressed: (() {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PlacedOrderScreen(
-                            addressID: widget.addressID,
-                            totalAmount: widget.totalAmount,
-                            sellerUID: widget.sellerUID,
+                      OyaPay(
+                        ctx: context,
+                        price: widget.totalAmount!.toInt(),
+                        email: sharedPreferences!.getString('email')!,
+                      ).handlePaymentInitialization().then((value) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PlacedOrderScreen(
+                              addressID: widget.addressID,
+                              totalAmount: widget.totalAmount,
+                              sellerUID: widget.sellerUID,
+                            ),
                           ),
-                        ),
-                      );
-
+                        );
+                      });
                       print(widget.totalAmount);
                       print(widget.totalAmount.runtimeType);
                     }),

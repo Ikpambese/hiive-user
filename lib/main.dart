@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         title: 'Seller App',
         theme: ThemeData(
           primarySwatch: Colors.blue,
-          scaffoldBackgroundColor: Colors.black,
+          // scaffoldBackgroundColor: Colors.black,
         ),
         home: const MySplashScreen(),
       ),

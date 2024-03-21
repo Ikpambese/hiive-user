@@ -1,4 +1,4 @@
 class ConstantKey {
   static const String PAYSTACK_KEY =
-      'pk_test_99d3e3105d0cc98778a4773623b0ceb9c83c3b35';
+      'FLWPUBK_TEST-e8d4cd5462fb381c4163ba7f7f746a98-X';
 }

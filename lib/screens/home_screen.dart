@@ -62,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: const BottomAppBar(
+        color: Colors.amber,
         child: ButtomNav(),
       ),
       appBar: AppBar(
@@ -160,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: TextStyle(
                           color: Colors.amber,
                           fontWeight: FontWeight.bold,
-                          fontSize: 15),
+                          fontSize: 20),
                     ),
                     Text(
                       '....',
@@ -185,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     )
                   : SliverStaggeredGrid.countBuilder(
-                      crossAxisCount: 1,
+                      crossAxisCount: 2,
                       staggeredTileBuilder: (c) => const StaggeredTile.fit(1),
                       itemBuilder: (context, index) {
                         Sellers sModel = Sellers.fromJson(

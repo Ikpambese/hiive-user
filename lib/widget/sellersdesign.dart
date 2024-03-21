@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../models/sellers.dart';
@@ -31,8 +32,18 @@ class _SellersDesignState extends State<SellersDesign> {
           Positioned.fill(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: Image.network(
-                widget.model!.sellerAvatarUrl!,
+              // child: Image.network(
+              //   widget.model!.sellerAvatarUrl!,
+              //   fit: BoxFit.cover,
+              // ),
+              child: CachedNetworkImage(
+                imageUrl: widget.model!.sellerAvatarUrl!,
+                placeholder: (context, url) => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+                height: 100,
+                width: 150,
                 fit: BoxFit.cover,
               ),
             ),
@@ -65,17 +76,17 @@ class _SellersDesignState extends State<SellersDesign> {
               padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
-                  ClipOval(
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      color: Colors.amber,
-                      child: const Icon(
-                        Icons.restaurant_menu,
-                        size: 30,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+                  // ClipOval(
+                  //   child: Container(
+                  //     padding: const EdgeInsets.all(10),
+                  //     color: Colors.amber,
+                  //     child: const Icon(
+                  //       Icons.restaurant_menu,
+                  //       size: 30,
+                  //       color: Colors.white,
+                  //     ),
+                  //   ),
+                  // ),
                   const SizedBox(width: 10),
                   Text(
                     widget.model!.sellerName!,
