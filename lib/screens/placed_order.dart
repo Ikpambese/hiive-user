@@ -109,10 +109,6 @@ class _PlacedOrderScreenState extends State<PlacedOrderScreen> {
             ElevatedButton(
               onPressed: (() {
                 addOrderDetails();
-                //
-                print('====================================');
-                print(widget.totalAmount);
-                print('====================================');
               }),
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
