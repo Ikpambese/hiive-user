@@ -9,6 +9,7 @@
 .buildlog/
 .history
 .svn/
+.key/
 migrate_working_dir/
 
 # IntelliJ related

@@ -1,7 +1,6 @@
 import 'dart:async';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import '../authentication/auth_screen.dart';
 import '../global/global.dart';
 import '../screens/home_screen.dart';
@@ -56,10 +55,11 @@ class _MySplashScreenState extends State<MySplashScreen> {
               'Hiive',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 40,
-                  fontFamily: 'Train',
-                  color: Colors.amber,
-                  letterSpacing: 3),
+                fontSize: 40,
+                fontFamily: 'Train',
+                color: Colors.amber,
+                letterSpacing: 3,
+              ),
             ),
           )
         ]),

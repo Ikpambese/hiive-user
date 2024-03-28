@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:marquee/marquee.dart';
 import '../assistants/assistant_methods.dart';
 import '../global/global.dart';
 import '../models/sellers.dart';
@@ -55,7 +56,26 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     restrictctBlockedeUser();
-    //clearCartNow(context);
+    clearCartNow(context);
+    //RgetCompany();
+  }
+
+  Future<void> getCompany() async {
+    final QuerySnapshot<Map<String, dynamic>> snapshot =
+        await FirebaseFirestore.instance.collection('internal').get();
+
+    final List<Map<String, dynamic>> documents =
+        snapshot.docs.map((doc) => doc.data()).toList();
+
+    for (var data in documents) {
+      int logistics = data['logistics'];
+      String message = data['message'];
+      await sharedPreferences!.setInt('logistics', logistics);
+      await sharedPreferences!.setString('message', message);
+
+      print('Logistics: $logistics');
+      print('Message: $message');
+    }
   }
 
   @override

@@ -63,6 +63,7 @@ dependencies:
   flutterwave_standard: ^1.0.7
   uuid: ^4.3.3
   font_awesome_flutter: ^10.7.0
+  marquee: ^2.2.3
   
   
 
