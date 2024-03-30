@@ -4,37 +4,44 @@ import 'package:hiiveuser/assistants/key.dart';
 import 'package:uuid/uuid.dart';
 
 class OyaPay {
-  OyaPay({required this.ctx, required this.price, required this.email});
+  OyaPay(
+      {required this.ctx,
+      required this.price,
+      required this.email,
+      required this.logistics});
   final BuildContext ctx;
   final int? price;
   final String email;
+  final int logistics;
 
-  bool isTestMode = true;
+  bool isTestMode = false;
 
   Future<void> handlePaymentInitialization() async {
     final Customer customer = Customer(email: email);
-
+    final realPrice = price! + logistics;
+    print(realPrice);
     final Flutterwave flutterwave = Flutterwave(
       context: ctx,
-      publicKey: getPublicKey(),
+      publicKey: ConstantKey.PAYSTACK_KEY,
       currency: 'NGN',
-      redirectUrl: 'https://facebook.com',
-      txRef: Uuid().v1(),
-      amount: price.toString(),
+      redirectUrl: 'https://www.google.com',
+      txRef: const Uuid().v1(),
+      amount: realPrice.toString(),
       customer: customer,
       paymentOptions: "card, payattitude, barter, bank transfer, ussd",
-      customization: Customization(title: "Test Payment"),
+      customization: Customization(title: "Hiive Payment"),
       isTestMode: isTestMode,
     );
     final ChargeResponse response = await flutterwave.charge();
+//final ChargeResponse response = await flutterwave.charge();
 
     showLoading(response.toString());
     print("${response.toJson()}");
   }
 
-  String getPublicKey() {
-    return ConstantKey.PAYSTACK_KEY;
-  }
+  // String getPublicKey() {
+  //   return ConstantKey.PAYSTACK_KEY;
+  // }
 
   Future<void> showLoading(String message) {
     return showDialog(

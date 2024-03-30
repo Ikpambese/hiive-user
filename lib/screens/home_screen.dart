@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     restrictctBlockedeUser();
     clearCartNow(context);
-    //RgetCompany();
+    getCompany();
   }
 
   Future<void> getCompany() async {
@@ -196,8 +196,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           )),
           StreamBuilder<QuerySnapshot>(
-            stream:
-                FirebaseFirestore.instance.collection("sellers").snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection("sellers")
+                .where('sellerSatus', isEqualTo: 'approved')
+                .snapshots(),
             builder: (context, snapshot) {
               return !snapshot.hasData
                   ? SliverToBoxAdapter(

@@ -141,6 +141,7 @@ class _AddressDesignState extends State<AddressDesign> {
                 ? ElevatedButton(
                     onPressed: (() {
                       OyaPay(
+                        logistics: sharedPreferences!.getInt('logistics')!,
                         ctx: context,
                         price: widget.totalAmount!.toInt(),
                         email: sharedPreferences!.getString('email')!,
