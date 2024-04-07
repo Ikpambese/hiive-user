@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hiiveuser/delivery/delivery_screen.dart';
 import 'package:hiiveuser/screens/search_screen.dart';
 
 import '../screens/address.dart';
@@ -79,6 +81,18 @@ class ButtomNav extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => MyOrdersScreen()));
               },
               icon: const Icon(Icons.shopify_rounded, color: Colors.amber),
+            )),
+          ),
+          ClipOval(
+            child: Material(
+                child: IconButton(
+              splashColor: Colors.grey[100],
+              highlightColor: Colors.grey[100],
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => DeliveryPage()));
+              },
+              icon: const Icon(FontAwesomeIcons.bicycle, color: Colors.amber),
             )),
           ),
         ],

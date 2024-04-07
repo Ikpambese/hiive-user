@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "25552045564",
+    "firebase_url": "https://hiive-7a484-default-rtdb.firebaseio.com",
     "project_id": "hiive-7a484",
     "storage_bucket": "hiive-7a484.appspot.com"
   },
@@ -29,6 +30,44 @@
         "mobilesdk_app_id": "1:25552045564:android:6b586b7b969dccd8691e79",
         "android_client_info": {
           "package_name": "com.example.hiiveuser"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsmZz1haSuniw0fOuguFLUQSGvx2ihFP0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25552045564:android:64c82d72caa7fea8691e79",
+        "android_client_info": {
+          "package_name": "com.example.hiivevendor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsmZz1haSuniw0fOuguFLUQSGvx2ihFP0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25552045564:android:95a6943d1b943fad691e79",
+        "android_client_info": {
+          "package_name": "com.hiiveall.hiiveuser"
         }
       },
       "oauth_client": [],
