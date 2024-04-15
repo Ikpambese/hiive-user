@@ -170,7 +170,7 @@ class _AddressDesignState extends State<AddressDesign> {
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: Text("OK"),
+                                  child: const Text("OK"),
                                 ),
                               ],
                             ),
