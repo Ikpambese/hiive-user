@@ -139,27 +139,67 @@ class _AddressDesignState extends State<AddressDesign> {
 
             widget.value == Provider.of<AddressChanger>(context).count
                 ? ElevatedButton(
-                    onPressed: (() {
+                    onPressed: () {
                       OyaPay(
                         logistics: sharedPreferences!.getInt('logistics')!,
                         ctx: context,
                         price: widget.totalAmount!.toInt(),
                         email: sharedPreferences!.getString('email')!,
-                      ).handlePaymentInitialization().then((value) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PlacedOrderScreen(
-                              addressID: widget.addressID,
-                              totalAmount: widget.totalAmount,
-                              sellerUID: widget.sellerUID,
+                      ).handlePaymentInitialization((bool success) {
+                        if (success) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PlacedOrderScreen(
+                                addressID: widget.addressID,
+                                totalAmount: widget.totalAmount,
+                                sellerUID: widget.sellerUID,
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        } else {
+                          // Handle payment failure
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text("Error"),
+                              content: const Text(
+                                  "Payment initialization failed. Please try again."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
                       });
-                      print(widget.totalAmount);
-                      print(widget.totalAmount.runtimeType);
-                    }),
+                    },
+
+                    // onPressed: (() {
+                    //   OyaPay(
+                    //     logistics: sharedPreferences!.getInt('logistics')!,
+                    //     ctx: context,
+                    //     price: widget.totalAmount!.toInt(),
+                    //     email: sharedPreferences!.getString('email')!,
+                    //   ).handlePaymentInitialization().then((_) {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) => PlacedOrderScreen(
+                    //           addressID: widget.addressID,
+                    //           totalAmount: widget.totalAmount,
+                    //           sellerUID: widget.sellerUID,
+                    //         ),
+                    //       ),
+                    //     );
+                    //   });
+                    //   print(widget.totalAmount);
+                    //   print(widget.totalAmount.runtimeType);
+                    // }),
                     style:
                         ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     child: const Text('Oya Pay'),
