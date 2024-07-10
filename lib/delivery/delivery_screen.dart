@@ -36,11 +36,11 @@ class _DeliveryPageState extends State<DeliveryPage> {
       // Save form data to Firebase
       FirebaseFirestore.instance.collection('minordelivery').add({
         'packageName': _packageNameController.text,
-        // 'packageWeight': _packageWeigth.text,
-        // 'packageDescription': _packageDescrition.text,
-        // 'packageDestination': _packageDestination.text,
-        // 'packageSenderName': _packageSenderName.text,
-        // 'packageSenderPhone': _packageSenderPhone.text,
+        'packageWeight': _packageWeightController.text,
+        'packageDescription': _packageDescriptionController.text,
+        'packageDestination': _packageDestinationController.text,
+        'packageSenderName': _packageSenderNameController.text,
+        'packageSenderPhone': _packageSenderPhoneController.text,
         'receiverName': _receiverNameController.text,
         'receiverPhone': _receiverPhoneController.text,
         'receiverAddress': _receiverAddressController.text,
@@ -53,11 +53,11 @@ class _DeliveryPageState extends State<DeliveryPage> {
 
       // Clear form fields
       _packageNameController.clear();
-      // _packageWeigth.clear();
-      // _packageDescrition.clear();
-      // _packageDestination.clear();
-      // _packageSenderName.clear();
-      // _packageSenderPhone.clear();
+      _packageWeightController.clear();
+      _packageDescriptionController.clear();
+      _packageDestinationController.clear();
+      _packageSenderNameController.clear();
+      _packageSenderPhoneController.clear();
       _receiverNameController.clear();
       _receiverPhoneController.clear();
       _receiverAddressController.clear();
@@ -67,12 +67,12 @@ class _DeliveryPageState extends State<DeliveryPage> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Success'),
-          content: Text('Your delivery request has been submitted.'),
+          title: const Text('Success'),
+          content: const Text('Your delivery request has been submitted.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         ),
@@ -86,7 +86,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'Hiive',
             style: TextStyle(
               fontSize: 40,
@@ -96,13 +96,13 @@ class _DeliveryPageState extends State<DeliveryPage> {
           ),
           backgroundColor: Colors.transparent,
           elevation: 0.0,
-          iconTheme: IconThemeData(color: Colors.amber),
+          iconTheme: const IconThemeData(color: Colors.amber),
           actions: [
             Container(
-              margin: EdgeInsets.only(right: 10, top: 5),
+              margin: const EdgeInsets.only(right: 10, top: 5),
               child: ClipOval(
                 child: Container(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: ClipOval(
                     child: Image.network(
                       sharedPreferences!.getString('photoUrl')!,
@@ -121,7 +121,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
             // First Tab: Submit Form
             SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
                     buildAnimatedText('This is what I want to slide'),
@@ -143,61 +143,61 @@ class _DeliveryPageState extends State<DeliveryPage> {
                             text: 'Package name cannot be empty',
                             hint: 'Enter Package name',
                           ),
-                          SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           TexformWidget(
                             controller: _packageWeightController,
                             text: 'Package weight cannot be empty',
                             hint: 'Enter Package Average Weight',
                           ),
-                          SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           TexformWidget(
                             controller: _packageDescriptionController,
                             text: 'Package description cannot be empty',
                             hint: 'Enter Package description',
                           ),
-                          SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           TexformWidget(
                             controller: _packageDestinationController,
                             text: 'Package destination cannot be empty',
                             hint: 'Enter Package destination address',
                           ),
-                          SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           TexformWidget(
                             controller: _packageSenderNameController,
                             text: 'Package sender cannot be empty',
                             hint: 'Enter Package sender name',
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           TexformWidget(
                             controller: _packageSenderPhoneController,
                             text: 'Package sender phone cannot be empty',
                             hint: 'Enter Package phone',
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           TexformWidget(
                             controller: _receiverNameController,
                             text: 'Package receiver name cannot be empty',
                             hint: 'Enter Package receiver name',
                           ),
-                          SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           TexformWidget(
                             controller: _receiverPhoneController,
                             text: 'Package receiver phone cannot be empty',
                             hint: 'Enter Package receiver phone',
                           ),
-                          SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           TexformWidget(
                             controller: _receiverAddressController,
                             text: 'Package receiver address cannot be empty',
                             hint: 'Enter Package receiver  address',
                           ),
-                          SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           TexformWidget(
                             controller: _receiverAltPhoneController,
                             text: 'Package alternate phone cannot be empty',
                             hint: 'Enter Package name',
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           AnimatedButton(
                             onPress: _submitForm,
                             height: 70,
@@ -206,7 +206,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                             isReverse: true,
                             selectedTextColor: Colors.black,
                             transitionType: TransitionType.LEFT_TO_RIGHT,
-                            textStyle: TextStyle(color: Colors.amber),
+                            textStyle: const TextStyle(color: Colors.amber),
                             backgroundColor: Colors.black,
                             borderColor: Colors.white,
                             borderRadius: 50,
@@ -226,7 +226,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasData) {
                   final requests = snapshot.data!.docs;
@@ -243,12 +243,12 @@ class _DeliveryPageState extends State<DeliveryPage> {
                     },
                   );
                 }
-                return Center(child: Text('No requests found.'));
+                return const Center(child: Text('No requests found.'));
               },
             ),
           ],
         ),
-        bottomNavigationBar: TabBar(
+        bottomNavigationBar: const TabBar(
           tabs: [
             Tab(icon: Icon(Icons.add)),
             Tab(icon: Icon(Icons.history)),
@@ -264,7 +264,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
           textDirection: TextDirection.ltr,
           text: text ?? '', // Ensure text is not null
           blankSpace: 50,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 20,
             color: Colors.amber,
           ),
@@ -296,7 +296,7 @@ class TexformWidget extends StatelessWidget {
       },
       decoration: InputDecoration(
         hintText: hint,
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
       ),
     );
   }
