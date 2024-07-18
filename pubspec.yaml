@@ -66,6 +66,7 @@ dependencies:
   marquee: ^2.2.3
   firebase_messaging: ^14.7.21
   flutter_animated_button: ^2.0.3
+  google_nav_bar: ^5.0.6
   
   
 

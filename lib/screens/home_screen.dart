@@ -81,10 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: const BottomAppBar(
-        color: Colors.amber,
-        child: ButtomNav(),
-      ),
+      bottomNavigationBar: BottomNav(),
       appBar: AppBar(
         title: const Text(
           'Hiive',
