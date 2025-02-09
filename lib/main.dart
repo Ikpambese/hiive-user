@@ -11,22 +11,34 @@ import 'global/global.dart';
 import 'splash/splash_screen.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  // initailize local data for use
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  sharedPreferences = await SharedPreferences.getInstance();
-  await Firebase.initializeApp();
+    // Initialize local data with error handling
+    sharedPreferences = await SharedPreferences.getInstance();
+    await Firebase.initializeApp();
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
     runApp(const MyApp());
-  });
-
-  //runApp(const MyApp());
+  } catch (e, stackTrace) {
+    print('Error during initialization: $e');
+    print('Stack trace: $stackTrace');
+    runApp(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Text('Error initializing app: $e'),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -40,9 +52,53 @@ class MyApp extends StatelessWidget {
         title: 'Seller App',
         theme: ThemeData(
           primarySwatch: Colors.blue,
-          // scaffoldBackgroundColor: Colors.black,
         ),
         home: const MySplashScreen(),
+        builder: (context, child) {
+          // Add error boundary for the entire app
+          ErrorWidget.builder = (FlutterErrorDetails details) {
+            bool isInDebugMode = false;
+            assert(() {
+              isInDebugMode = true;
+              return true;
+            }());
+
+            return Material(
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 60,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      isInDebugMode
+                          ? 'An error occurred: ${details.exception}'
+                          : 'An error occurred. Please try again later.',
+                      style: const TextStyle(color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          };
+
+          // Add null check for child widget
+          if (child == null) {
+            return const SizedBox.shrink();
+          }
+
+          return MediaQuery(
+            // Prevent text scaling that might break the layout
+            data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+            child: child,
+          );
+        },
       ),
     );
   }

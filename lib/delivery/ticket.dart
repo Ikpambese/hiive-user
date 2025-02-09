@@ -10,6 +10,7 @@ class TrackingCard extends StatelessWidget {
   final String departureTime;
   final String sortingCenterTime;
   final String arrivalTime;
+  final double? bill;
 
   const TrackingCard({
     super.key,
@@ -22,6 +23,7 @@ class TrackingCard extends StatelessWidget {
     required this.departureTime,
     required this.sortingCenterTime,
     required this.arrivalTime,
+    this.bill,
   });
 
   @override
@@ -36,15 +38,27 @@ class TrackingCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            trackingId,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Tracking ID:',
+                style: TextStyle(
+                  color: Colors.white.withAlpha(179),
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                trackingId,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           Row(
             children: [
               _statusBadge(status),
@@ -52,11 +66,129 @@ class TrackingCard extends StatelessWidget {
               _statusBadge(type),
             ],
           ),
-          const SizedBox(height: 16),
-          _trackingStep("Departure", departure, departureTime, true),
+          const SizedBox(height: 24),
           _trackingStep(
-              "Sorting Center", sortingCenter, sortingCenterTime, true),
-          _trackingStep("Arrival", arrival, arrivalTime, false),
+            "Sender",
+            departure,
+            departureTime,
+            true,
+          ),
+          _trackingStep(
+            "Processing",
+            sortingCenter,
+            sortingCenterTime,
+            status != 'Pending',
+          ),
+          _trackingStep(
+            "Receiver",
+            arrival,
+            arrivalTime,
+            status == 'Delivered',
+          ),
+          const SizedBox(height: 16),
+          if (bill != null) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Bill Amount:',
+                  style: TextStyle(
+                    color: Colors.white.withAlpha(179),
+                    fontSize: 14,
+                  ),
+                ),
+                Text(
+                  '₦${bill!.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (bill! > 0.0 && status == 'Pay')
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    print('Process payment for tracking ID: $trackingId');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.greenAccent,
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+                  child: const Text(
+                    'Make Payment',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            if (bill! == 0.0 && status == 'Pending')
+              const Center(
+                child: Text(
+                  'Hold one while we attend to your request',
+                  style: TextStyle(
+                    color: Colors.greenAccent,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            if (bill! > 0.0 && status == 'Complete')
+              const Center(
+                child: Text(
+                  'We are coming your way now',
+                  style: TextStyle(
+                    color: Colors.greenAccent,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            if (bill! > 0.0 && status == 'delivering')
+              const Center(
+                child: Text(
+                  'We are delivering your package',
+                  style: TextStyle(
+                    color: Colors.greenAccent,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            if (bill! > 0.0 && status == 'Delivered')
+              const Center(
+                child: Text(
+                  'Completed, Thank you for choosing us',
+                  style: TextStyle(
+                    color: Colors.greenAccent,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            const SizedBox(height: 16),
+          ],
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Center(
+              child: Text(
+                'Close',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -104,7 +236,7 @@ class TrackingCard extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withAlpha(179),
                     fontSize: 14,
                   ),
                 ),

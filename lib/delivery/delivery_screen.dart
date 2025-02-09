@@ -226,10 +226,42 @@ class _DeliveryPageState extends State<DeliveryPage> {
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('minordelivery')
+                  .orderBy('timestamp', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasData && snapshot.data!.docChanges.isNotEmpty) {
+                  // Check for status changes
+                  for (var change in snapshot.data!.docChanges) {
+                    if (change.type == DocumentChangeType.modified) {
+                      final newData = change.doc.data() as Map<String, dynamic>;
+                      final status = newData['status']?.toString();
+
+                      if (status != null) {
+                        String message = '';
+                        switch (status) {
+                          case 'Pay':
+                            message =
+                                'Your delivery request has been processed. Please make payment.';
+                            break;
+                          case 'Complete':
+                            message =
+                                'Payment received. Rider is coming to pick up your package.';
+                            break;
+                          case 'delivering':
+                            message =
+                                'Your package is on the way to its destination.';
+                            break;
+                          case 'Delivered':
+                            message =
+                                'Package has been delivered successfully!';
+                            break;
+                        }
+                      }
+                    }
+                  }
                 }
                 if (snapshot.hasData) {
                   final requests = snapshot.data!.docs;
@@ -240,25 +272,52 @@ class _DeliveryPageState extends State<DeliveryPage> {
                           requests[index].data() as Map<String, dynamic>;
                       return GestureDetector(
                         onTap: () {
-                          print(
-                            request['bill'],
+                          // Show tracking card in a modal bottom sheet
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) => SingleChildScrollView(
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom,
+                                ),
+                                child: TrackingCard(
+                                  trackingId: requests[index].id,
+                                  status: request['status']?.toString() ??
+                                      'Pending',
+                                  type: 'Package Delivery',
+                                  departure: request['packageSenderName']
+                                          ?.toString() ??
+                                      'N/A',
+                                  sortingCenter: 'Processing',
+                                  arrival:
+                                      request['receiverName']?.toString() ??
+                                          'N/A',
+                                  departureTime:
+                                      (request['timestamp'] as Timestamp?)
+                                              ?.toDate()
+                                              .toString()
+                                              .split('.')[0] ??
+                                          'N/A',
+                                  sortingCenterTime: 'Pending',
+                                  arrivalTime: 'Pending',
+                                  bill: (request['bill'] as num?)?.toDouble() ??
+                                      0.0,
+                                ),
+                              ),
+                            ),
                           );
                         },
-                        // child: TrackingCard(
-                        //   trackingId: "trackingId",
-                        //   status: "status",
-                        //   type: "type",
-                        //   departure: "departure",
-                        //   sortingCenter: "sortingCenter",
-                        //   arrival: "arrival",
-                        //   departureTime: "departureTime",
-                        //   sortingCenterTime: "sortingCenterTime",
-                        //   arrivalTime: "arrivalTime",
-                        // ),
                         child: ListTile(
-                          title: Text(request['package']),
-                          subtitle: Text(request['address']),
-                          trailing: Text(request['bill']),
+                          title: Text(
+                              request['packageName']?.toString() ?? 'No name'),
+                          subtitle: Text(
+                              request['packageDestination']?.toString() ??
+                                  'No address'),
+                          trailing:
+                              Text('₦${request['bill']?.toString() ?? '0'}'),
                         ),
                       );
                     },
@@ -283,7 +342,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
         height: 20,
         child: Marquee(
           textDirection: TextDirection.ltr,
-          text: text ?? '', // Ensure text is not null
+          text: text.isNotEmpty ? text : 'Welcome to Hiive',
           blankSpace: 50,
           style: const TextStyle(
             fontSize: 20,
