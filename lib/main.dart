@@ -9,6 +9,7 @@ import 'assistants/cartitem_counter.dart';
 import 'assistants/total_amount.dart';
 import 'global/global.dart';
 import 'splash/splash_screen.dart';
+import 'services/notification_service.dart';
 
 Future<void> main() async {
   try {
@@ -17,6 +18,9 @@ Future<void> main() async {
     // Initialize local data with error handling
     sharedPreferences = await SharedPreferences.getInstance();
     await Firebase.initializeApp();
+
+    // Initialize notifications
+    await NotificationService.initialize();
 
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 

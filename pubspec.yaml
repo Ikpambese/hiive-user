@@ -68,6 +68,8 @@ dependencies:
   flutter_animated_button: ^2.0.3
   google_nav_bar: ^5.0.6
   intl: ^0.20.2
+  flutter_local_notifications: ^18.0.1
+  permission_handler: ^11.0.1  # For handling notification permissions
   
   
 

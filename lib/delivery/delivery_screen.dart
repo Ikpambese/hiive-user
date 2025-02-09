@@ -4,6 +4,7 @@ import 'package:hiiveuser/delivery/ticket.dart';
 import 'package:hiiveuser/global/global.dart';
 import 'package:marquee/marquee.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
+import '../services/notification_service.dart';
 
 class DeliveryPage extends StatefulWidget {
   const DeliveryPage({super.key});
@@ -233,7 +234,6 @@ class _DeliveryPageState extends State<DeliveryPage> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasData && snapshot.data!.docChanges.isNotEmpty) {
-                  // Check for status changes
                   for (var change in snapshot.data!.docChanges) {
                     if (change.type == DocumentChangeType.modified) {
                       final newData = change.doc.data() as Map<String, dynamic>;
@@ -241,6 +241,8 @@ class _DeliveryPageState extends State<DeliveryPage> {
 
                       if (status != null) {
                         String message = '';
+                        String title = 'Delivery Update';
+
                         switch (status) {
                           case 'Pay':
                             message =
@@ -258,6 +260,14 @@ class _DeliveryPageState extends State<DeliveryPage> {
                             message =
                                 'Package has been delivered successfully!';
                             break;
+                        }
+
+                        if (message.isNotEmpty) {
+                          NotificationService.showDeliveryNotification(
+                            title: title,
+                            message: message,
+                            payload: change.doc.id,
+                          );
                         }
                       }
                     }
