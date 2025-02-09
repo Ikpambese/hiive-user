@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hiiveuser/delivery/ticket.dart';
 import 'package:hiiveuser/global/global.dart';
 import 'package:marquee/marquee.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
 
 class DeliveryPage extends StatefulWidget {
+  const DeliveryPage({super.key});
+
   @override
   _DeliveryPageState createState() => _DeliveryPageState();
 }
@@ -46,7 +49,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
         'receiverAddress': _receiverAddressController.text,
         'receiverAltPhone': _receiverAltPhoneController.text,
         'status': 'pending',
-        'bill': '0',
+        'bill': double.tryParse('0'),
         // Add additional fields if needed
         'timestamp': DateTime.now(),
       });
@@ -235,10 +238,28 @@ class _DeliveryPageState extends State<DeliveryPage> {
                     itemBuilder: (context, index) {
                       final request =
                           requests[index].data() as Map<String, dynamic>;
-                      return ListTile(
-                        title: Text(request['package']),
-                        subtitle: Text(request['address']),
-                        trailing: Text(request['status']),
+                      return GestureDetector(
+                        onTap: () {
+                          print(
+                            request['bill'],
+                          );
+                        },
+                        // child: TrackingCard(
+                        //   trackingId: "trackingId",
+                        //   status: "status",
+                        //   type: "type",
+                        //   departure: "departure",
+                        //   sortingCenter: "sortingCenter",
+                        //   arrival: "arrival",
+                        //   departureTime: "departureTime",
+                        //   sortingCenterTime: "sortingCenterTime",
+                        //   arrivalTime: "arrivalTime",
+                        // ),
+                        child: ListTile(
+                          title: Text(request['package']),
+                          subtitle: Text(request['address']),
+                          trailing: Text(request['bill']),
+                        ),
                       );
                     },
                   );
@@ -258,7 +279,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
     );
   }
 
-  Widget buildAnimatedText(String text) => Container(
+  Widget buildAnimatedText(String text) => SizedBox(
         height: 20,
         child: Marquee(
           textDirection: TextDirection.ltr,

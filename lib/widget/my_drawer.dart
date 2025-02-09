@@ -9,6 +9,8 @@ import '../screens/my_orders_screen.dart';
 import '../screens/search_screen.dart';
 
 class MyDrawer extends StatelessWidget {
+  const MyDrawer({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -25,7 +27,7 @@ class MyDrawer extends StatelessWidget {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(1.0),
-                    child: Container(
+                    child: SizedBox(
                       height: 160,
                       width: 160,
                       child: CircleAvatar(
@@ -77,7 +79,7 @@ class MyDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                        MaterialPageRoute(builder: (context) => const HomeScreen()));
                   },
                 ),
                 const Divider(height: 10, color: Colors.grey, thickness: 2),

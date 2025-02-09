@@ -16,7 +16,7 @@ import '../widget/simple_appbar.dart';
 class AddressScreen extends StatefulWidget {
   final double? totalAmount;
   final String? sellerUID;
-  AddressScreen({this.sellerUID, this.totalAmount});
+  const AddressScreen({super.key, this.sellerUID, this.totalAmount});
 
   @override
   State<AddressScreen> createState() => _AddressScreenState();

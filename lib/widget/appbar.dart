@@ -6,12 +6,13 @@ import '../screens/cart_screen.dart';
 class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
   final PreferredSizeWidget? bottom;
   final String? sellerUID;
-  MyAppBar({this.bottom, this.sellerUID});
+  const MyAppBar({super.key, this.bottom, this.sellerUID});
 
   @override
   // ignore: library_private_types_in_public_api
   _MyAppBarState createState() => _MyAppBarState();
 
+  @override
   Size get preferredSize => bottom == null
       ? Size(56, AppBar().preferredSize.height)
       : Size(56, 80 + AppBar().preferredSize.height);

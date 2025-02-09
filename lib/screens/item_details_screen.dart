@@ -11,7 +11,7 @@ import '../widget/macro_widget.dart';
 class ItemDetailsScreen extends StatefulWidget {
   final Items? model;
 
-  const ItemDetailsScreen({this.model});
+  const ItemDetailsScreen({super.key, this.model});
 
   @override
   State<ItemDetailsScreen> createState() => _ItemDetailsScreenState();
@@ -128,7 +128,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  "\₦${widget.model!.price! - (widget.model!.price! * (0) / 100)}",
+                                  "₦${widget.model!.price! - (widget.model!.price! * (0) / 100)}",
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -137,7 +137,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                           .primary),
                                 ),
                                 Text(
-                                  "\₦${widget.model!.price}.00",
+                                  "₦${widget.model!.price}.00",
                                   style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,

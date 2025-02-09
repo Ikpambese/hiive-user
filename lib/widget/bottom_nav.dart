@@ -9,7 +9,7 @@ import '../screens/home_screen.dart';
 import '../screens/my_orders_screen.dart';
 
 class BottomNav extends StatefulWidget {
-  BottomNav({super.key});
+  const BottomNav({super.key});
 
   @override
   State<BottomNav> createState() => _BottomNavState();

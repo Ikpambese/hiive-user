@@ -21,7 +21,7 @@ seperateOrderItemIDs(orderIDs) {
     //56557657
     String getItemId = (pos != -1) ? item.substring(0, pos) : item;
 
-    print("\nThis is itemID now = " + getItemId);
+    print("\nThis is itemID now = $getItemId");
 
     separateItemIDsList.add(getItemId);
   }
@@ -46,7 +46,7 @@ seperateItemIDs() {
 
 addItemTocart(String? foodItemId, BuildContext context, int itemCounter) {
   List<String>? tempLIst = sharedPreferences!.getStringList('userCart');
-  tempLIst!.add(foodItemId! + ':$itemCounter');
+  tempLIst!.add('${foodItemId!}:$itemCounter');
 
 // ADD TO FIREBASE
   FirebaseFirestore.instance
@@ -75,7 +75,7 @@ seperateItemQuantities() {
     List<String> listItemCharacters = item.split(':').toList();
 
     var quanNumber = int.parse(listItemCharacters[1].toString());
-    print('\nthis is itemID now ' + quanNumber.toString());
+    print('\nthis is itemID now $quanNumber');
     seperateItemQtyList.add(quanNumber);
   }
   print('\nthis is items lis now ');
@@ -102,7 +102,7 @@ seperateORderItemQuantities(orderIDs) {
     //7
     var quanNumber = int.parse(listItemCharacters[1].toString());
 
-    print("\nThis is Quantity Number = " + quanNumber.toString());
+    print("\nThis is Quantity Number = $quanNumber");
 
     separateItemQuantityList.add(quanNumber.toString());
   }

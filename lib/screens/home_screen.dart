@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:marquee/marquee.dart';
 import '../assistants/assistant_methods.dart';
 import '../global/global.dart';
 import '../models/sellers.dart';

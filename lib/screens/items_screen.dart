@@ -13,7 +13,7 @@ import '../widget/text_widget.dart';
 class ItemsScrenn extends StatefulWidget {
   // ItemsScrenn({Sellers? model});
   final Menus? model;
-  ItemsScrenn({this.model});
+  const ItemsScrenn({super.key, this.model});
 
   @override
   State<ItemsScrenn> createState() => _ItemsScrennState();

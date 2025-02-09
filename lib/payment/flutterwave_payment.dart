@@ -110,7 +110,7 @@ class OyaPay {
       builder: (BuildContext context) {
         return AlertDialog(
           content: Container(
-            margin: EdgeInsets.fromLTRB(30, 20, 30, 20),
+            margin: const EdgeInsets.fromLTRB(30, 20, 30, 20),
             width: double.infinity,
             height: 50,
             child: Text(message),

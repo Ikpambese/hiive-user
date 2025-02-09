@@ -10,7 +10,7 @@ class OrderCard extends StatelessWidget {
   final String? orderID;
   final List<String>? seperateQuantitiesList;
 
-  OrderCard({
+  const OrderCard({super.key, 
     this.itemCount,
     this.data,
     this.orderID,
@@ -50,7 +50,7 @@ class OrderCard extends StatelessWidget {
 
 Widget placedOrderDesignWidget(
     Items model, BuildContext context, seperateQuantitiesList) {
-  return Container(
+  return SizedBox(
     width: MediaQuery.of(context).size.width,
     height: 100,
     //color: Colors.grey[200],

@@ -6,6 +6,8 @@ import '../models/sellers.dart';
 import '../widget/sellersdesign.dart';
 
 class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
+
   @override
   State<SearchScreen> createState() => _SearchScreenState();
 }
@@ -24,7 +26,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.amber,
         ),
         elevation: 0,
@@ -54,7 +56,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     color: Colors.amber,
                   ),
                   Expanded(
-                    child: Container(
+                    child: SizedBox(
                       height: 50,
                       width: 50,
                       child: Padding(

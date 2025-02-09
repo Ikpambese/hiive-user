@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class MyTextFiled extends StatelessWidget {
   final String? hint;
   final TextEditingController? controller;
-  MyTextFiled({this.controller, this.hint});
+  const MyTextFiled({super.key, this.controller, this.hint});
 
   @override
   Widget build(BuildContext context) {

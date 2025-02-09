@@ -8,6 +8,8 @@ import '../widget/progress_bar.dart';
 import '../widget/simple_appbar.dart';
 
 class MyOrdersScreen extends StatefulWidget {
+  const MyOrdersScreen({super.key});
+
   @override
   _MyOrdersScreenState createState() => _MyOrdersScreenState();
 }

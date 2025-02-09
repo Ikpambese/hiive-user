@@ -5,7 +5,7 @@ import '../screens/home_screen.dart';
 class StatusBarnner extends StatelessWidget {
   final bool? status;
   final String? orderStatus;
-  StatusBarnner({this.orderStatus, this.status});
+  const StatusBarnner({super.key, this.orderStatus, this.status});
 
   @override
   Widget build(BuildContext context) {

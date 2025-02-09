@@ -8,7 +8,7 @@ class ShipmentAddressDesign extends StatelessWidget {
   final Address? model;
   final String? orderID;
 
-  ShipmentAddressDesign({this.model, this.orderID});
+  const ShipmentAddressDesign({super.key, this.model, this.orderID});
 
   @override
   Widget build(BuildContext context) {

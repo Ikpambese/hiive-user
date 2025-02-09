@@ -8,7 +8,7 @@ class SellersDesign extends StatefulWidget {
   Sellers? model;
   BuildContext? context;
 
-  SellersDesign({this.model, this.context});
+  SellersDesign({super.key, this.model, this.context});
 
   @override
   _SellersDesignState createState() => _SellersDesignState();

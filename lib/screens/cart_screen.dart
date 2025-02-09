@@ -18,7 +18,7 @@ import '../widget/text_widget.dart';
 
 class CartScreen extends StatefulWidget {
   final String? sellerUID;
-  CartScreen({this.sellerUID});
+  const CartScreen({super.key, this.sellerUID});
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -53,8 +53,10 @@ class _CartScreenState extends State<CartScreen> {
             icon: const Icon(Icons.clear_all),
             onPressed: (() {
               clearCartNow(context);
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MySplashScreen()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const MySplashScreen()));
               Fluttertoast.showToast(msg: 'Cart has been Cleared');
             }),
           ),
@@ -95,7 +97,7 @@ class _CartScreenState extends State<CartScreen> {
             child: Consumer2<TotalAmount, CartItemCounter>(
                 builder: (context, amountProvider, cartProvider, c) {
               return Padding(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 child: Center(
                     child: cartProvider.count == 0
                         ? Container()

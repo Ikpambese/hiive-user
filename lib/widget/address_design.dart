@@ -16,7 +16,7 @@ class AddressDesign extends StatefulWidget {
   final String? addressID;
   final double? totalAmount;
   final String? sellerUID;
-  AddressDesign({
+  const AddressDesign({super.key, 
     this.addressID,
     this.currentIndex,
     this.model,
