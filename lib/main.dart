@@ -98,8 +98,9 @@ class MyApp extends StatelessWidget {
           }
 
           return MediaQuery(
-            // Prevent text scaling that might break the layout
-            data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+            data: MediaQuery.of(context).copyWith(
+              textScaler: const TextScaler.linear(1.0),
+            ),
             child: child,
           );
         },

@@ -14,75 +14,38 @@ class DeliveryPage extends StatefulWidget {
 }
 
 class _DeliveryPageState extends State<DeliveryPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _packageNameController = TextEditingController();
-  final TextEditingController _packageWeightController =
-      TextEditingController();
-  final TextEditingController _packageDescriptionController =
-      TextEditingController();
-  final TextEditingController _packageDestinationController =
-      TextEditingController();
-  final TextEditingController _packageSenderNameController =
-      TextEditingController();
-  final TextEditingController _packageSenderPhoneController =
-      TextEditingController();
+  final TextEditingController _inputController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
-  final TextEditingController _receiverNameController = TextEditingController();
-  final TextEditingController _receiverPhoneController =
-      TextEditingController();
-  final TextEditingController _receiverAddressController =
-      TextEditingController();
-  final TextEditingController _receiverAltPhoneController =
-      TextEditingController();
+  int currentStep = 0;
+  Map<String, String> deliveryData = {};
+  List<Map<String, String>> chatHistory = [];
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      // Save form data to Firebase
-      FirebaseFirestore.instance.collection('minordelivery').add({
-        'packageName': _packageNameController.text,
-        'packageWeight': _packageWeightController.text,
-        'packageDescription': _packageDescriptionController.text,
-        'packageDestination': _packageDestinationController.text,
-        'packageSenderName': _packageSenderNameController.text,
-        'packageSenderPhone': _packageSenderPhoneController.text,
-        'receiverName': _receiverNameController.text,
-        'receiverPhone': _receiverPhoneController.text,
-        'receiverAddress': _receiverAddressController.text,
-        'receiverAltPhone': _receiverAltPhoneController.text,
-        'status': 'pending',
-        'bill': double.tryParse('0'),
-        // Add additional fields if needed
-        'timestamp': DateTime.now(),
-      });
+  final List<String> questions = [
+    "What's the name of your package?",
+    "What's the approximate weight of your package?",
+    "Please describe your package briefly",
+    "What's the destination address?",
+    "What's your name (sender)?",
+    "What's your phone number?",
+    "What's the receiver's name?",
+    "What's the receiver's phone number?",
+    "What's the receiver's address?",
+    "What's the receiver's alternate phone number?",
+  ];
 
-      // Clear form fields
-      _packageNameController.clear();
-      _packageWeightController.clear();
-      _packageDescriptionController.clear();
-      _packageDestinationController.clear();
-      _packageSenderNameController.clear();
-      _packageSenderPhoneController.clear();
-      _receiverNameController.clear();
-      _receiverPhoneController.clear();
-      _receiverAddressController.clear();
-      _receiverAltPhoneController.clear();
-
-      // Show confirmation dialog or navigate to next screen
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Success'),
-          content: const Text('Your delivery request has been submitted.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-    }
-  }
+  final List<String> fields = [
+    'packageName',
+    'packageWeight',
+    'packageDescription',
+    'packageDestination',
+    'packageSenderName',
+    'packageSenderPhone',
+    'receiverName',
+    'receiverPhone',
+    'receiverAddress',
+    'receiverAltPhone',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -122,108 +85,30 @@ class _DeliveryPageState extends State<DeliveryPage> {
         ),
         body: TabBarView(
           children: [
-            // First Tab: Submit Form
-            SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    buildAnimatedText('This is what I want to slide'),
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Package Details',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          TexformWidget(
-                            controller: _packageNameController,
-                            text: 'Package name cannot be empty',
-                            hint: 'Enter Package name',
-                          ),
-                          const SizedBox(height: 15),
-                          TexformWidget(
-                            controller: _packageWeightController,
-                            text: 'Package weight cannot be empty',
-                            hint: 'Enter Package Average Weight',
-                          ),
-                          const SizedBox(height: 15),
-                          TexformWidget(
-                            controller: _packageDescriptionController,
-                            text: 'Package description cannot be empty',
-                            hint: 'Enter Package description',
-                          ),
-                          const SizedBox(height: 15),
-                          TexformWidget(
-                            controller: _packageDestinationController,
-                            text: 'Package destination cannot be empty',
-                            hint: 'Enter Package destination address',
-                          ),
-                          const SizedBox(height: 15),
-                          TexformWidget(
-                            controller: _packageSenderNameController,
-                            text: 'Package sender cannot be empty',
-                            hint: 'Enter Package sender name',
-                          ),
-                          const SizedBox(height: 20),
-                          TexformWidget(
-                            controller: _packageSenderPhoneController,
-                            text: 'Package sender phone cannot be empty',
-                            hint: 'Enter Package phone',
-                          ),
-                          const SizedBox(height: 20),
-                          TexformWidget(
-                            controller: _receiverNameController,
-                            text: 'Package receiver name cannot be empty',
-                            hint: 'Enter Package receiver name',
-                          ),
-                          const SizedBox(height: 15),
-                          TexformWidget(
-                            controller: _receiverPhoneController,
-                            text: 'Package receiver phone cannot be empty',
-                            hint: 'Enter Package receiver phone',
-                          ),
-                          const SizedBox(height: 15),
-                          TexformWidget(
-                            controller: _receiverAddressController,
-                            text: 'Package receiver address cannot be empty',
-                            hint: 'Enter Package receiver  address',
-                          ),
-                          const SizedBox(height: 15),
-                          TexformWidget(
-                            controller: _receiverAltPhoneController,
-                            text: 'Package alternate phone cannot be empty',
-                            hint: 'Enter Package name',
-                          ),
-                          const SizedBox(height: 20),
-                          AnimatedButton(
-                            onPress: _submitForm,
-                            height: 70,
-                            width: 200,
-                            text: 'SUBMIT',
-                            isReverse: true,
-                            selectedTextColor: Colors.black,
-                            transitionType: TransitionType.LEFT_TO_RIGHT,
-                            textStyle: const TextStyle(color: Colors.amber),
-                            backgroundColor: Colors.black,
-                            borderColor: Colors.white,
-                            borderRadius: 50,
-                            borderWidth: 2,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+            // Chat Interface
+            Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.all(16),
+                    itemCount: chatHistory.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index < chatHistory.length) {
+                        return _buildChatMessage(chatHistory[index]);
+                      } else if (currentStep < questions.length) {
+                        return _buildBotMessage(questions[currentStep]);
+                      } else if (currentStep == questions.length) {
+                        return _buildSummaryMessage();
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
                 ),
-              ),
+                if (currentStep <= questions.length) _buildInputArea(),
+              ],
             ),
-            // Second Tab: Display Requests
+            // History Tab
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('minordelivery')
@@ -233,46 +118,6 @@ class _DeliveryPageState extends State<DeliveryPage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                if (snapshot.hasData && snapshot.data!.docChanges.isNotEmpty) {
-                  for (var change in snapshot.data!.docChanges) {
-                    if (change.type == DocumentChangeType.modified) {
-                      final newData = change.doc.data() as Map<String, dynamic>;
-                      final status = newData['status']?.toString();
-
-                      if (status != null) {
-                        String message = '';
-                        String title = 'Delivery Update';
-
-                        switch (status) {
-                          case 'Pay':
-                            message =
-                                'Your delivery request has been processed. Please make payment.';
-                            break;
-                          case 'Complete':
-                            message =
-                                'Payment received. Rider is coming to pick up your package.';
-                            break;
-                          case 'delivering':
-                            message =
-                                'Your package is on the way to its destination.';
-                            break;
-                          case 'Delivered':
-                            message =
-                                'Package has been delivered successfully!';
-                            break;
-                        }
-
-                        if (message.isNotEmpty) {
-                          NotificationService.showDeliveryNotification(
-                            title: title,
-                            message: message,
-                            payload: change.doc.id,
-                          );
-                        }
-                      }
-                    }
-                  }
-                }
                 if (snapshot.hasData) {
                   final requests = snapshot.data!.docs;
                   return ListView.builder(
@@ -280,86 +125,277 @@ class _DeliveryPageState extends State<DeliveryPage> {
                     itemBuilder: (context, index) {
                       final request =
                           requests[index].data() as Map<String, dynamic>;
-                      return GestureDetector(
-                        onTap: () {
-                          // Show tracking card in a modal bottom sheet
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            builder: (context) => SingleChildScrollView(
-                              child: Container(
-                                padding: EdgeInsets.only(
-                                  bottom:
-                                      MediaQuery.of(context).viewInsets.bottom,
-                                ),
-                                child: TrackingCard(
-                                  trackingId: requests[index].id,
-                                  status: request['status']?.toString() ??
-                                      'Pending',
-                                  type: 'Package Delivery',
-                                  departure: request['packageSenderName']
-                                          ?.toString() ??
-                                      'N/A',
-                                  sortingCenter: 'Processing',
-                                  arrival:
-                                      request['receiverName']?.toString() ??
-                                          'N/A',
-                                  departureTime:
-                                      (request['timestamp'] as Timestamp?)
-                                              ?.toDate()
-                                              .toString()
-                                              .split('.')[0] ??
-                                          'N/A',
-                                  sortingCenterTime: 'Pending',
-                                  arrivalTime: 'Pending',
-                                  bill: (request['bill'] as num?)?.toDouble() ??
-                                      0.0,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        child: ListTile(
-                          title: Text(
-                              request['packageName']?.toString() ?? 'No name'),
-                          subtitle: Text(
-                              request['packageDestination']?.toString() ??
-                                  'No address'),
-                          trailing:
-                              Text('₦${request['bill']?.toString() ?? '0'}'),
-                        ),
-                      );
+                      return _buildHistoryTile(request, requests[index].id);
                     },
                   );
                 }
-                return const Center(child: Text('No requests found.'));
+                return const Center(child: Text('No delivery history found.'));
               },
             ),
           ],
         ),
         bottomNavigationBar: const TabBar(
           tabs: [
-            Tab(icon: Icon(Icons.add)),
-            Tab(icon: Icon(Icons.history)),
+            Tab(icon: Icon(Icons.chat), text: "New Delivery"),
+            Tab(icon: Icon(Icons.history), text: "History"),
           ],
         ),
       ),
     );
   }
 
-  Widget buildAnimatedText(String text) => SizedBox(
-        height: 20,
-        child: Marquee(
-          textDirection: TextDirection.ltr,
-          text: text.isNotEmpty ? text : 'Welcome to Hiive',
-          blankSpace: 50,
-          style: const TextStyle(
-            fontSize: 20,
+  Widget _buildChatMessage(Map<String, String> message) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: message['type'] == 'bot'
+            ? MainAxisAlignment.start
+            : MainAxisAlignment.end,
+        children: [
+          Container(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.7,
+            ),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: message['type'] == 'bot'
+                  ? Colors.blue[100]
+                  : Colors.amber[100],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(message['message']!),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBotMessage(String message) {
+    return _buildChatMessage({'type': 'bot', 'message': message});
+  }
+
+  Widget _buildInputArea() {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _inputController,
+              decoration: InputDecoration(
+                hintText: 'Type your answer...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                filled: true,
+                fillColor: Colors.grey[200],
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.send),
+            onPressed: _handleSubmit,
             color: Colors.amber,
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryMessage() {
+    String summary = "Here's a summary of your delivery request:\n\n";
+    for (int i = 0; i < questions.length; i++) {
+      summary += "${questions[i]}\n${deliveryData[fields[i]]}\n\n";
+    }
+    summary +=
+        "\nWould you like to create this delivery ticket? (Type 'yes' to confirm)";
+    return _buildBotMessage(summary);
+  }
+
+  void _handleSubmit() {
+    if (_inputController.text.isEmpty) return;
+
+    String userInput = _inputController.text.trim();
+
+    // Check for duplicate answer
+    if (deliveryData.containsValue(userInput)) {
+      setState(() {
+        chatHistory.add({
+          'type': 'bot',
+          'message':
+              'This answer was already used. Please provide a different answer.',
+        });
+      });
+      _inputController.clear();
+      return;
+    }
+
+    setState(() {
+      chatHistory.add({
+        'type': 'user',
+        'message': userInput,
+      });
+
+      if (currentStep < questions.length) {
+        deliveryData[fields[currentStep]] = userInput;
+        if (currentStep < questions.length - 1) {
+          chatHistory.add({
+            'type': 'bot',
+            'message': questions[currentStep + 1],
+          });
+        }
+        currentStep++;
+      } else if (userInput.toLowerCase() == 'yes') {
+        _createDeliveryTicket();
+      }
+    });
+
+    _inputController.clear();
+    _scrollToBottom();
+  }
+
+  void _createDeliveryTicket() {
+    FirebaseFirestore.instance.collection('minordelivery').add({
+      ...deliveryData,
+      'status': 'Pending',
+      'bill': 0.0,
+      'timestamp': DateTime.now(),
+    }).then((_) {
+      setState(() {
+        // Clear everything and start fresh
+        chatHistory.clear();
+        deliveryData.clear();
+        currentStep = 0;
+
+        // Show success message and start new chat
+        chatHistory.add({
+          'type': 'bot',
+          'message': 'Delivery ticket created successfully!\n\n' +
+              'Let\'s create a new delivery ticket!\n\n' +
+              questions[0],
+        });
+      });
+    }).catchError((error) {
+      setState(() {
+        chatHistory.add({
+          'type': 'bot',
+          'message': 'Error creating ticket. Please try again.',
+        });
+      });
+    });
+  }
+
+  Widget _buildHistoryTile(Map<String, dynamic> request, String docId) {
+    return Dismissible(
+      key: Key(docId),
+      background: Container(
+        color: Colors.red,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        child: const Icon(
+          Icons.delete,
+          color: Colors.white,
         ),
-      );
+      ),
+      direction: DismissDirection.endToStart,
+      confirmDismiss: (direction) async {
+        return await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Confirm"),
+              content:
+                  const Text("Are you sure you want to delete this ticket?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text("CANCEL"),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text(
+                    "DELETE",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+      onDismissed: (direction) {
+        FirebaseFirestore.instance
+            .collection('minordelivery')
+            .doc(docId)
+            .delete()
+            .then((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Ticket deleted successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }).catchError((error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Error deleting ticket'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        });
+      },
+      child: ListTile(
+        title: Text(request['packageName']?.toString() ?? 'No name'),
+        subtitle:
+            Text(request['packageDestination']?.toString() ?? 'No address'),
+        trailing: Text('₦${request['bill']?.toString() ?? '0'}'),
+        onTap: () => _showTrackingCard(request, docId),
+      ),
+    );
+  }
+
+  void _showTrackingCard(Map<String, dynamic> request, String docId) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: TrackingCard(
+            trackingId: docId,
+            status: request['status']?.toString() ?? 'Pending',
+            type: 'Package Delivery',
+            departure: request['packageSenderName']?.toString() ?? 'N/A',
+            sortingCenter: 'Processing',
+            arrival: request['receiverName']?.toString() ?? 'N/A',
+            departureTime: (request['timestamp'] as Timestamp?)
+                    ?.toDate()
+                    .toString()
+                    .split('.')[0] ??
+                'N/A',
+            sortingCenterTime: 'Pending',
+            arrivalTime: 'Pending',
+            bill: (request['bill'] as num?)?.toDouble() ?? 0.0,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
 }
 
 class TexformWidget extends StatelessWidget {
