@@ -15,13 +15,38 @@ class BottomNav extends StatefulWidget {
   State<BottomNav> createState() => _BottomNavState();
 }
 
-class _BottomNavState extends State<BottomNav> {
+class _BottomNavState extends State<BottomNav>
+    with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   void navigateBottom(int index) {
     setState(() {
       _selectedIndex = index;
     });
+    _animationController.reset();
+    _animationController.forward();
+
     switch (_selectedIndex) {
       case 0:
         Navigator.push(
@@ -58,50 +83,82 @@ class _BottomNavState extends State<BottomNav> {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen width for responsive sizing
-    double screenWidth = MediaQuery.of(context).size.width;
-
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      child: GNav(
-        selectedIndex: _selectedIndex,
-        onTabChange: (index) => navigateBottom(index),
-        color: Colors.grey[400],
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        activeColor: Colors.grey[700],
-        tabBackgroundColor: Colors.grey.shade300,
-        tabActiveBorder: Border.all(color: Colors.white),
-        tabBorderRadius: 24,
-        padding:
-            EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: 12),
-        gap: 8, // Space between icon and text
-        tabs: const [
-          GButton(
-            icon: Icons.home,
-            text: 'Home',
-            textStyle: TextStyle(fontSize: 12),
-          ),
-          GButton(
-            icon: Icons.search,
-            text: 'Search',
-            textStyle: TextStyle(fontSize: 12),
-          ),
-          GButton(
-            icon: Icons.pin_drop,
-            text: 'Address',
-            textStyle: TextStyle(fontSize: 12),
-          ),
-          GButton(
-            icon: Icons.shopify,
-            text: 'Orders',
-            textStyle: TextStyle(fontSize: 12),
-          ),
-          GButton(
-            icon: FontAwesomeIcons.bicycle,
-            text: 'Delivery',
-            textStyle: TextStyle(fontSize: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.amber.withOpacity(0.15),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
           ),
         ],
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+        ),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: GNav(
+              selectedIndex: _selectedIndex,
+              onTabChange: navigateBottom,
+              gap: 8,
+              color: Colors.grey[400],
+              activeColor: Colors.amber,
+              tabBackgroundColor: Colors.amber.withOpacity(0.1),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              duration: const Duration(milliseconds: 300),
+              tabBorderRadius: 20,
+              curve: Curves.easeInOut,
+              iconSize: 24,
+              textStyle: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.amber,
+              ),
+              tabs: [
+                GButton(
+                  icon: Icons.home_rounded,
+                  text: 'Home',
+                  iconActiveColor: Colors.amber,
+                  iconSize: 24,
+                ),
+                GButton(
+                  icon: Icons.search_rounded,
+                  text: 'Search',
+                  iconActiveColor: Colors.amber,
+                  iconSize: 24,
+                ),
+                GButton(
+                  icon: Icons.location_on_rounded,
+                  text: 'Address',
+                  iconActiveColor: Colors.amber,
+                  iconSize: 24,
+                ),
+                GButton(
+                  icon: Icons.shopping_bag_rounded,
+                  text: 'Orders',
+                  iconActiveColor: Colors.amber,
+                  iconSize: 24,
+                ),
+                GButton(
+                  icon: FontAwesomeIcons.bicycle,
+                  text: 'Delivery',
+                  iconActiveColor: Colors.amber,
+                  iconSize: 22,
+                ),
+              ],
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              rippleColor: Colors.amber.withOpacity(0.1),
+              hoverColor: Colors.amber.withOpacity(0.1),
+              haptic: true,
+            ),
+          ),
+        ),
       ),
     );
   }
