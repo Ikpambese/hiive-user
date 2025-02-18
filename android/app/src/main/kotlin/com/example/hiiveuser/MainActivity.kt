@@ -1,4 +1,4 @@
-package com.example.hiiveuser
+package com.hiiveall.hiiveuser
 
 import io.flutter.embedding.android.FlutterActivity
 

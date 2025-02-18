@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../payment/flutterwave_payment.dart';
+import '../global/global.dart';
 
 class TrackingCard extends StatelessWidget {
   final String trackingId;
@@ -26,6 +29,47 @@ class TrackingCard extends StatelessWidget {
     this.bill,
   });
 
+  void _handlePayment(BuildContext context) {
+    OyaPay(
+      logistics: sharedPreferences!.getInt('logistics')!,
+      ctx: context,
+      price: bill!.toInt(),
+      email: sharedPreferences!.getString('email')!,
+    ).handlePaymentInitialization((bool success) {
+      if (success) {
+        // Update ticket status to 'Pay' after successful payment
+        FirebaseFirestore.instance
+            .collection('minordelivery')
+            .doc(trackingId)
+            .update({
+          'status': 'Pay',
+        }).then((_) {
+          Navigator.pop(context); // Close the tracking card
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Payment successful! Status updated.'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }).catchError((error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Error updating status. Please contact support.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Payment failed. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -49,7 +93,7 @@ class TrackingCard extends StatelessWidget {
                 ),
               ),
               Text(
-                trackingId,
+                trackingId.toUpperCase(),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -108,12 +152,10 @@ class TrackingCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            if (bill! > 0.0 && status == 'Pay')
+            if (bill! > 0.0 && status == 'Pending')
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    print('Process payment for tracking ID: $trackingId');
-                  },
+                  onPressed: () => _handlePayment(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.greenAccent,
                     foregroundColor: Colors.black,

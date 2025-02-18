@@ -75,9 +75,10 @@ class _MenusScreenState extends State<MenusScreen> {
                   ? const SliverToBoxAdapter(
                       child: Center(child: CircularProgressIndicator()),
                     )
-                  : SliverStaggeredGrid.countBuilder(
+                  : SliverMasonryGrid.count(
                       crossAxisCount: 2,
-                      staggeredTileBuilder: (c) => const StaggeredTile.fit(1),
+                      mainAxisSpacing: 4,
+                      crossAxisSpacing: 4,
                       itemBuilder: ((context, index) {
                         Menus model = Menus.fromJson(snapshot.data?.docs[index]
                             .data()! as Map<String, dynamic>);
@@ -86,7 +87,7 @@ class _MenusScreenState extends State<MenusScreen> {
                           context: context,
                         );
                       }),
-                      itemCount: snapshot.data!.docs.length,
+                      childCount: snapshot.data!.docs.length,
                     );
             },
           ),

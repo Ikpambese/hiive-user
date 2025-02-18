@@ -24,7 +24,8 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.example.hiiveuser"
+    namespace "com.hiiveall.hiiveuser"
+    //namespace "com.hiiveall.hiiveuser"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
