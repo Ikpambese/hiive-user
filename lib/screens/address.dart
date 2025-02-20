@@ -22,25 +22,47 @@ class AddressScreen extends StatefulWidget {
   State<AddressScreen> createState() => _AddressScreenState();
 }
 
-class _AddressScreenState extends State<AddressScreen> {
+class _AddressScreenState extends State<AddressScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _slideController;
+  late Animation<Offset> _slideAnimation;
+
   @override
   void initState() {
-    print('HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH');
-    print(widget.totalAmount);
-    print('HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH');
     super.initState();
+    _slideController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.5),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _slideController,
+      curve: Curves.easeOutCubic,
+    ));
+    _slideController.forward();
+  }
+
+  @override
+  void dispose() {
+    _slideController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleAppBar(
-        title: 'Hiive',
-      ),
+      backgroundColor: Colors.grey[50],
+      appBar: SimpleAppBar(title: 'Select Delivery Address'),
       floatingActionButton: FloatingActionButton.extended(
-        icon: const Icon(Icons.add_location),
+        icon: const Icon(Icons.add_location_alt_rounded),
         backgroundColor: Colors.amber,
-        label: const Text('add new Address'),
+        elevation: 4,
+        label: const Text(
+          'Add New Address',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         onPressed: () {
           Navigator.push(
             context,
@@ -50,57 +72,107 @@ class _AddressScreenState extends State<AddressScreen> {
           );
         },
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: EdgeInsets.all(8),
-              child: Text(
-                'Select Address: ',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Delivery Address',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Select the address where you want your items delivered',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-          Consumer<AddressChanger>(builder: (context, address, c) {
-            return Flexible(
-                child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(sharedPreferences!.getString('uid'))
-                  .collection('userAddress')
-                  .snapshots(),
-              builder: (context, snapshot) {
-                return !snapshot.hasData
-                    ? Center(child: circularProgress())
-                    : snapshot.data!.docs.length == 0
-                        ? Container()
-                        : ListView.builder(
-                            itemCount: snapshot.data!.docs.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return AddressDesign(
-                                currentIndex: address.count,
-                                value: index,
-                                addressID: snapshot.data!.docs[index].id,
-                                sellerUID: widget.sellerUID,
-                                totalAmount: widget.totalAmount,
-                                model: Address.fromJson(
-                                    snapshot.data!.docs[index].data()!
-                                        as Map<String, dynamic>),
-                              );
-                            },
-                          );
-              },
-            ));
-          })
-        ],
+            Expanded(
+              child: Consumer<AddressChanger>(
+                builder: (context, address, c) {
+                  return StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(sharedPreferences!.getString('uid'))
+                        .collection('userAddress')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return Center(child: circularProgress());
+                      }
+
+                      if (snapshot.data!.docs.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.location_off_outlined,
+                                size: 80,
+                                color: Colors.grey[400],
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'No addresses found',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Add a new address to continue',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      return SlideTransition(
+                        position: _slideAnimation,
+                        child: ListView.builder(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            return AddressDesign(
+                              currentIndex: address.count,
+                              value: index,
+                              addressID: snapshot.data!.docs[index].id,
+                              sellerUID: widget.sellerUID,
+                              totalAmount: widget.totalAmount,
+                              model: Address.fromJson(
+                                snapshot.data!.docs[index].data()!
+                                    as Map<String, dynamic>,
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -71,6 +71,7 @@ dependencies:
   permission_handler: ^11.0.1  # For handling notification permissions
   animated_text_kit: ^4.2.2
   firebase_app_check: ^0.3.2+3
+  audioplayers: ^6.2.0
   
   
 
@@ -101,6 +102,7 @@ flutter:
     - images/
     - assets/animations/
     - assets/images/
+    - assets/sounds/
 
     
 

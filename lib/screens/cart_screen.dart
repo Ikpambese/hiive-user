@@ -24,156 +24,260 @@ class CartScreen extends StatefulWidget {
   State<CartScreen> createState() => _CartScreenState();
 }
 
-class _CartScreenState extends State<CartScreen> {
+class _CartScreenState extends State<CartScreen> with TickerProviderStateMixin {
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
   List<int>? separateItemQuantityList;
   num totalAmount = 0;
+
   @override
   void initState() {
     super.initState();
     totalAmount = 0;
     Provider.of<TotalAmount>(context, listen: false).displayTotalAmount(0);
     separateItemQuantityList = seperateItemQuantities();
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
+    _fadeController.forward();
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: MyAppBar(sellerUID: widget.sellerUID),
-      floatingActionButton:
-          Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-        const SizedBox(
-          width: 10,
-        ),
-        Align(
-          alignment: Alignment.bottomLeft,
-          child: FloatingActionButton.extended(
-            heroTag: 'btn2',
-            label: const Text('Clear Cart'),
-            backgroundColor: Colors.amber,
-            icon: const Icon(Icons.clear_all),
-            onPressed: (() {
-              clearCartNow(context);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MySplashScreen()));
-              Fluttertoast.showToast(msg: 'Cart has been Cleared');
-            }),
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomLeft,
-          child: FloatingActionButton.extended(
-            heroTag: 'btn1',
-            label: const Text(
-              'Check Out',
-              style: TextStyle(fontSize: 16),
-            ),
-            backgroundColor: Colors.amber,
-            icon: const Icon(Icons.navigate_next),
-            onPressed: (() {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddressScreen(
-                      totalAmount: totalAmount.toDouble(),
-                      sellerUID: widget.sellerUID,
-                    ),
-                  ));
-              print(totalAmount);
-              print(totalAmount.toDouble());
-            }),
-          ),
-        ),
-      ]),
       body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
         slivers: [
-          // overall total amou
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: TextWidget(title: 'My Cart List'),
-          ),
           SliverToBoxAdapter(
-            child: Consumer2<TotalAmount, CartItemCounter>(
-                builder: (context, amountProvider, cartProvider, c) {
-              return Padding(
-                padding: const EdgeInsets.all(8),
-                child: Center(
-                    child: cartProvider.count == 0
-                        ? Container()
-                        : Text(
-                            'Total Price: ${amountProvider.tAmount.toString()}',
-                            style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500),
-                          )),
-              );
-            }),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Shopping Cart',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Consumer2<TotalAmount, CartItemCounter>(
+                    builder: (context, amountProvider, cartProvider, c) {
+                      return cartProvider.count == 0
+                          ? const SizedBox()
+                          : Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.amber.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '${cartProvider.count} items',
+                                    style: const TextStyle(
+                                      color: Colors.black54,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  Text(
+                                    '₦${amountProvider.tAmount.toStringAsFixed(2)}',
+                                    style: const TextStyle(
+                                      color: Colors.amber,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('items')
                 .where('itemID', whereIn: seperateItemIDs())
-                .orderBy(
-                  'publishedDate',
-                  descending: true,
-                )
+                .orderBy('publishedDate', descending: true)
                 .snapshots(),
             builder: ((context, snapshot) {
-              return !snapshot.hasData
-                  ? SliverToBoxAdapter(
-                      child: Center(
-                        child: circularProgress(),
-                      ),
-                    )
-                  : snapshot.data!.docs.length == 0
-                      ? SliverToBoxAdapter(
-                          child: Container(
-                              child: const Center(
-                            child: Text("NO ITEMS IN CART"),
-                          )),
-                        )
-                      : SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            ((context, index) {
-                              Items model = Items.fromJson(
-                                  snapshot.data!.docs[index].data()!
-                                      as Map<String, dynamic>);
-                              if (index == 0) {
-                                totalAmount = 0;
-                                totalAmount = totalAmount +
-                                    (model.price! *
-                                        separateItemQuantityList![index]);
-                              } else {
-                                totalAmount = totalAmount +
-                                    (model.price! *
-                                        separateItemQuantityList![index]);
-                              }
+              if (!snapshot.hasData) {
+                return const SliverFillRemaining(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
+                    ),
+                  ),
+                );
+              }
 
-                              if (snapshot.data!.docs.length - 1 == index) {
-                                WidgetsBinding.instance
-                                    .addPostFrameCallback((timeStamp) {
-                                  Provider.of<TotalAmount>(context,
-                                          listen: false)
-                                      .displayTotalAmount(
-                                          totalAmount.toDouble());
-                                });
-                              }
-                              return CartItemDesign(
-                                model: model,
-                                context: context,
-                                quanNumber: separateItemQuantityList![index],
-                              );
-                            }),
-                            childCount: snapshot.hasData
-                                ? snapshot.data!.docs.length
-                                : 0,
+              if (snapshot.data!.docs.isEmpty) {
+                return SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.shopping_cart_outlined,
+                          size: 80,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Your cart is empty',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w500,
                           ),
-                        );
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              return SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    ((context, index) {
+                      Items model = Items.fromJson(
+                        snapshot.data!.docs[index].data()!
+                            as Map<String, dynamic>,
+                      );
+
+                      // Calculate total amount
+                      if (index == 0) {
+                        totalAmount = 0;
+                        totalAmount = totalAmount +
+                            (model.price! * separateItemQuantityList![index]);
+                      } else {
+                        totalAmount = totalAmount +
+                            (model.price! * separateItemQuantityList![index]);
+                      }
+
+                      if (snapshot.data!.docs.length - 1 == index) {
+                        WidgetsBinding.instance
+                            .addPostFrameCallback((timeStamp) {
+                          Provider.of<TotalAmount>(context, listen: false)
+                              .displayTotalAmount(totalAmount.toDouble());
+                        });
+                      }
+
+                      return FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: CartItemDesign(
+                          model: model,
+                          context: context,
+                          quanNumber: separateItemQuantityList![index],
+                        ),
+                      );
+                    }),
+                    childCount:
+                        snapshot.hasData ? snapshot.data!.docs.length : 0,
+                  ),
+                ),
+              );
             }),
           ),
+          const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
         ],
+      ),
+      bottomSheet: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(16),
+        child: SafeArea(
+          child: Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    clearCartNow(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MySplashScreen(),
+                      ),
+                    );
+                    Fluttertoast.showToast(msg: 'Cart has been cleared');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red[100],
+                    foregroundColor: Colors.red,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  icon: const Icon(Icons.delete_outline),
+                  label: const Text('Clear Cart'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                flex: 2,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddressScreen(
+                          totalAmount: totalAmount.toDouble(),
+                          sellerUID: widget.sellerUID,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.amber,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  icon: const Icon(Icons.shopping_cart_checkout),
+                  label: const Text(
+                    'Checkout',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

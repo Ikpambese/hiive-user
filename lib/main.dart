@@ -129,7 +129,6 @@ import 'package:flutter/services.dart';
 import 'package:hiiveuser/firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
 
 import 'assistants/address_changer.dart';
 import 'assistants/cartitem_counter.dart';

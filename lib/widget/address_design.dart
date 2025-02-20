@@ -30,185 +30,213 @@ class AddressDesign extends StatefulWidget {
   State<AddressDesign> createState() => _AddressDesignState();
 }
 
-class _AddressDesignState extends State<AddressDesign> {
+class _AddressDesignState extends State<AddressDesign>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Provider.of<AddressChanger>(context, listen: false)
-            .displayResults(widget.value);
-      },
-      child: Card(
-        color: Colors.amber.withAlpha(102),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Radio(
-                  value: widget.value,
-                  groupValue: widget.currentIndex,
-                  activeColor: Colors.amber,
-                  onChanged: ((val) {
-                    // Provider
-
-                    Provider.of<AddressChanger>(context, listen: false)
-                        .displayResults(val);
-                    print(val);
-                  }),
-                ),
-                Column(
+    return MouseRegion(
+      onEnter: (_) => _controller.forward(),
+      onExit: (_) => _controller.reverse(),
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () {
+                Provider.of<AddressChanger>(context, listen: false)
+                    .displayResults(widget.value);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      child: Table(children: [
-                        TableRow(children: [
-                          const Text(
-                            'Name: ',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal),
+                    Row(
+                      children: [
+                        Radio(
+                          value: widget.value,
+                          groupValue: widget.currentIndex,
+                          activeColor: Colors.amber,
+                          onChanged: (val) {
+                            Provider.of<AddressChanger>(context, listen: false)
+                                .displayResults(val);
+                          },
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildInfoRow('Name', widget.model!.name),
+                              const SizedBox(height: 8),
+                              _buildInfoRow('Phone', widget.model!.phoneNumber),
+                              const SizedBox(height: 8),
+                              _buildInfoRow(
+                                  'Flat Number', widget.model!.flatNumber),
+                              const SizedBox(height: 8),
+                              _buildInfoRow('City', widget.model!.city),
+                              const SizedBox(height: 8),
+                              _buildInfoRow('State', widget.model!.state),
+                              const SizedBox(height: 8),
+                              _buildInfoRow(
+                                  'Full Address', widget.model!.fullAddress),
+                            ],
                           ),
-                          Text(widget.model!.name.toString())
-                        ]),
-                        TableRow(children: [
-                          const Text(
-                            'Phone: ',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          Text(widget.model!.phoneNumber.toString())
-                        ]),
-                        TableRow(children: [
-                          const Text(
-                            'Flat Number: ',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          Text(widget.model!.flatNumber.toString())
-                        ]),
-                        TableRow(children: [
-                          const Text(
-                            'City: ',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          Text(widget.model!.city.toString())
-                        ]),
-                        TableRow(children: [
-                          const Text(
-                            'State: ',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          Text(widget.model!.state.toString())
-                        ]),
-                        TableRow(children: [
-                          const Text(
-                            'Full Address: ',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          Text(widget.model!.fullAddress.toString())
-                        ]),
-                      ]),
+                        ),
+                      ],
                     ),
-                  ],
-                )
-              ],
-            ),
-            ElevatedButton(
-              onPressed: (() async {
-                try {
-                  await MapsUtils.openMap(
-                      widget.model!.lat!, widget.model!.lng!);
-                } catch (e) {
-                  print(e.toString());
-                }
-              }),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.black54),
-              child: const Text('Check in Maps'),
-            ),
-
-            // Oya Pay
-
-            widget.value == Provider.of<AddressChanger>(context).count
-                ? ElevatedButton(
-                    onPressed: () {
-                      OyaPay(
-                        logistics: sharedPreferences!.getInt('logistics')!,
-                        ctx: context,
-                        price: widget.totalAmount!.toInt(),
-                        email: sharedPreferences!.getString('email')!,
-                      ).handlePaymentInitialization((bool success) {
-                        if (success) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PlacedOrderScreen(
-                                addressID: widget.addressID,
-                                totalAmount: widget.totalAmount,
-                                sellerUID: widget.sellerUID,
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              try {
+                                await MapsUtils.openMap(
+                                    widget.model!.lat!, widget.model!.lng!);
+                              } catch (e) {
+                                print(e.toString());
+                              }
+                            },
+                            icon: const Icon(Icons.map_outlined),
+                            label: const Text('View on Map'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.grey[800],
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                          );
-                        } else {
-                          // Handle payment failure
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text("Error"),
-                              content: const Text(
-                                  "Payment initialization failed. Please try again."),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text("OK"),
+                          ),
+                        ),
+                        if (widget.value ==
+                            Provider.of<AddressChanger>(context).count) ...[
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                OyaPay(
+                                  logistics:
+                                      sharedPreferences!.getInt('logistics')!,
+                                  ctx: context,
+                                  price: widget.totalAmount!.toInt(),
+                                  email: sharedPreferences!.getString('email')!,
+                                ).handlePaymentInitialization((bool success) {
+                                  if (success) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => PlacedOrderScreen(
+                                          addressID: widget.addressID,
+                                          totalAmount: widget.totalAmount,
+                                          sellerUID: widget.sellerUID,
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text("Error"),
+                                        content: const Text(
+                                            "Payment failed. Please try again."),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: const Text("OK"),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                });
+                              },
+                              icon: const Icon(Icons.payment),
+                              label: const Text('Pay Now'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.amber,
+                                foregroundColor: Colors.white,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                              ],
+                              ),
                             ),
-                          );
-                        }
-                      });
-                    },
-
-                    // onPressed: (() {
-                    //   OyaPay(
-                    //     logistics: sharedPreferences!.getInt('logistics')!,
-                    //     ctx: context,
-                    //     price: widget.totalAmount!.toInt(),
-                    //     email: sharedPreferences!.getString('email')!,
-                    //   ).handlePaymentInitialization().then((_) {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         builder: (context) => PlacedOrderScreen(
-                    //           addressID: widget.addressID,
-                    //           totalAmount: widget.totalAmount,
-                    //           sellerUID: widget.sellerUID,
-                    //         ),
-                    //       ),
-                    //     );
-                    //   });
-                    //   print(widget.totalAmount);
-                    //   print(widget.totalAmount.runtimeType);
-                    // }),
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                    child: const Text('Oya Pay'),
-                  )
-                : Container()
-          ],
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String? value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 100,
+          child: Text(
+            '$label:',
+            style: const TextStyle(
+              color: Colors.black54,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value ?? '',
+            style: const TextStyle(
+              color: Colors.black87,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

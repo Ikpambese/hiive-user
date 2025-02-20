@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hiiveuser/delivery/ticket.dart';
 import 'package:hiiveuser/global/global.dart';
-import 'package:marquee/marquee.dart';
-import 'package:flutter_animated_button/flutter_animated_button.dart';
-import '../services/notification_service.dart';
+
+import 'package:audioplayers/audioplayers.dart';
 
 class DeliveryPage extends StatefulWidget {
   const DeliveryPage({super.key});
@@ -13,7 +12,48 @@ class DeliveryPage extends StatefulWidget {
   _DeliveryPageState createState() => _DeliveryPageState();
 }
 
-class _DeliveryPageState extends State<DeliveryPage> {
+//
+class _DeliveryPageState extends State<DeliveryPage>
+    with TickerProviderStateMixin {
+  // Add audio player
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
+  // Add these animation controllers
+  late AnimationController _slideController;
+  late Animation<Offset> _slideAnimation;
+  late AnimationController _scaleController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _slideController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _slideController,
+      curve: Curves.easeOutCubic,
+    ));
+
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.02,
+    ).animate(CurvedAnimation(
+      parent: _scaleController,
+      curve: Curves.easeInOut,
+    ));
+
+    _slideController.forward();
+  }
+
   final TextEditingController _inputController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
@@ -52,131 +92,197 @@ class _DeliveryPageState extends State<DeliveryPage> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        backgroundColor: Colors.grey[50],
         appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
           title: const Text(
             'Hiive',
             style: TextStyle(
               fontSize: 40,
               fontFamily: 'Signatra',
               color: Colors.amber,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          backgroundColor: Colors.transparent,
-          elevation: 0.0,
-          iconTheme: const IconThemeData(color: Colors.amber),
           actions: [
             Container(
-              margin: const EdgeInsets.only(right: 10, top: 5),
-              child: ClipOval(
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  child: ClipOval(
-                    child: Image.network(
-                      sharedPreferences!.getString('photoUrl')!,
-                      height: 100,
-                      width: 100,
-                    ),
+              margin: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
                   ),
+                ],
+              ),
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(
+                  sharedPreferences!.getString('photoUrl')!,
                 ),
               ),
             ),
           ],
           centerTitle: true,
         ),
-        body: TabBarView(
+        body: Column(
           children: [
-            // Chat Interface
-            Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(16),
-                    itemCount: chatHistory.length + 1,
-                    itemBuilder: (context, index) {
-                      if (index < chatHistory.length) {
-                        return _buildChatMessage(chatHistory[index]);
-                      } else if (currentStep < questions.length) {
-                        return _buildBotMessage(questions[currentStep]);
-                      } else if (currentStep == questions.length) {
-                        return _buildSummaryMessage();
-                      }
-                      return const SizedBox.shrink();
-                    },
+            Container(
+              color: Colors.white,
+              child: TabBar(
+                indicatorColor: Colors.amber,
+                labelColor: Colors.amber,
+                unselectedLabelColor: Colors.grey,
+                tabs: const [
+                  Tab(
+                    icon: Icon(Icons.local_shipping_outlined),
+                    text: "New Delivery",
                   ),
-                ),
-                if (currentStep <= questions.length) _buildInputArea(),
-              ],
+                  Tab(
+                    icon: Icon(Icons.history),
+                    text: "History",
+                  ),
+                ],
+              ),
             ),
-            // History Tab
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('minordelivery')
-                  .orderBy('timestamp', descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasData) {
-                  final requests = snapshot.data!.docs;
-                  return ListView.builder(
-                    itemCount: requests.length,
-                    itemBuilder: (context, index) {
-                      final request =
-                          requests[index].data() as Map<String, dynamic>;
-                      return _buildHistoryTile(request, requests[index].id);
-                    },
-                  );
-                }
-                return const Center(child: Text('No delivery history found.'));
-              },
+            Expanded(
+              child: TabBarView(
+                children: [
+                  // Chat Interface
+                  SlideTransition(
+                    position: _slideAnimation,
+                    child: _buildChatInterface(),
+                  ),
+                  // History Tab
+                  SlideTransition(
+                    position: _slideAnimation,
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('minordelivery')
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        }
+
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+
+                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                          return const Center(
+                              child: Text('No delivery history'));
+                        }
+
+                        return ListView.builder(
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            var doc = snapshot.data!.docs[index];
+                            return _buildHistoryTile(
+                              doc.data() as Map<String, dynamic>,
+                              doc.id,
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-        bottomNavigationBar: const TabBar(
-          tabs: [
-            Tab(icon: Icon(Icons.chat), text: "New Delivery"),
-            Tab(icon: Icon(Icons.history), text: "History"),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildChatMessage(Map<String, String> message) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: message['type'] == 'bot'
-            ? MainAxisAlignment.start
-            : MainAxisAlignment.end,
-        children: [
-          Container(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.7,
-            ),
-            padding: const EdgeInsets.all(12),
+  // Update the _buildChatInterface method
+  Widget _buildChatInterface() {
+    return Column(
+      children: [
+        Expanded(
+          child: Container(
             decoration: BoxDecoration(
-              color: message['type'] == 'bot'
-                  ? Colors.blue[100]
-                  : Colors.amber[100],
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            child: Text(message['message']!),
+            margin: const EdgeInsets.all(16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.all(16),
+                itemCount: chatHistory.length + 1,
+                itemBuilder: (context, index) {
+                  if (index < chatHistory.length) {
+                    return _buildAnimatedChatMessage(chatHistory[index]);
+                  } else if (currentStep < questions.length) {
+                    return _buildAnimatedChatMessage(
+                        {'type': 'bot', 'message': questions[currentStep]});
+                  } else if (currentStep == questions.length) {
+                    String summary = "📦 Delivery Request Summary\n\n";
+                    for (int i = 0; i < questions.length; i++) {
+                      summary +=
+                          "${questions[i]}\n${deliveryData[fields[i]]}\n\n";
+                    }
+                    summary +=
+                        "\n✨ Type 'yes' to confirm and create the delivery ticket";
+
+                    return _buildAnimatedChatMessage({
+                      'type': 'bot',
+                      'message': summary,
+                    });
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ),
+          ),
+        ),
+        if (currentStep <= questions.length) _buildEnhancedInputArea(),
+      ],
+    );
+  }
+
+  Widget _buildAnimatedChatMessage(Map<String, String> message) {
+    return SlideTransition(
+      position: _slideAnimation,
+      child: MouseRegion(
+        onEnter: (_) => _scaleController.forward(),
+        onExit: (_) => _scaleController.reverse(),
+        child: ScaleTransition(
+          scale: _scaleAnimation,
+          child: _buildChatMessage(message),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEnhancedInputArea() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildBotMessage(String message) {
-    return _buildChatMessage({'type': 'bot', 'message': message});
-  }
-
-  Widget _buildInputArea() {
-    return Container(
-      padding: const EdgeInsets.all(8),
       child: Row(
         children: [
           Expanded(
@@ -184,51 +290,108 @@ class _DeliveryPageState extends State<DeliveryPage> {
               controller: _inputController,
               decoration: InputDecoration(
                 hintText: 'Type your answer...',
+                hintStyle: TextStyle(color: Colors.grey[400]),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(25),
+                  borderSide: BorderSide.none,
                 ),
                 filled: true,
-                fillColor: Colors.grey[200],
+                fillColor: Colors.grey[100],
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
               ),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.send),
-            onPressed: _handleSubmit,
-            color: Colors.amber,
+          const SizedBox(width: 12),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.amber,
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.send_rounded),
+              onPressed: _handleSubmit,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSummaryMessage() {
-    String summary = "Here's a summary of your delivery request:\n\n";
-    for (int i = 0; i < questions.length; i++) {
-      summary += "${questions[i]}\n${deliveryData[fields[i]]}\n\n";
-    }
-    summary +=
-        "\nWould you like to create this delivery ticket? (Type 'yes' to confirm)";
-    return _buildBotMessage(summary);
+  // Update the _buildChatMessage method to handle long messages better
+  Widget _buildChatMessage(Map<String, String> message) {
+    bool isBot = message['type'] == 'bot';
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment:
+            isBot ? MainAxisAlignment.start : MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (isBot)
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              child: CircleAvatar(
+                backgroundColor: Colors.amber,
+                radius: 15,
+                child: Icon(Icons.support_agent, color: Colors.white, size: 20),
+              ),
+            ),
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: isBot ? Colors.white : Colors.amber.shade100,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(isBot ? 0 : 20),
+                  topRight: Radius.circular(isBot ? 20 : 0),
+                  bottomLeft: const Radius.circular(20),
+                  bottomRight: const Radius.circular(20),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+                border: isBot ? Border.all(color: Colors.grey.shade200) : null,
+              ),
+              child: Text(
+                message['message']!,
+                style: TextStyle(
+                  fontSize: 15,
+                  height: 1.4,
+                  color: isBot ? Colors.black87 : Colors.black,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
+  // Update _handleSubmit to include sound effects
   void _handleSubmit() {
-    if (_inputController.text.isEmpty) return;
-
-    String userInput = _inputController.text.trim();
-
-    // Check for duplicate answer
-    if (deliveryData.containsValue(userInput)) {
+    if (_inputController.text.isEmpty) {
+      _audioPlayer.play(AssetSource('sounds/message_error.mp3'));
       setState(() {
         chatHistory.add({
           'type': 'bot',
           'message':
-              'This answer was already used. Please provide a different answer.',
+              '⚠️ Please provide a response. This field cannot be left blank.',
         });
       });
-      _inputController.clear();
+      _scrollToBottom();
       return;
     }
+
+    String userInput = _inputController.text.trim();
+    _audioPlayer.play(AssetSource('sounds/message_sent.mp3'));
 
     setState(() {
       chatHistory.add({
@@ -238,17 +401,43 @@ class _DeliveryPageState extends State<DeliveryPage> {
 
       if (currentStep < questions.length) {
         deliveryData[fields[currentStep]] = userInput;
-        if (currentStep < questions.length - 1) {
-          chatHistory.add({
-            'type': 'bot',
-            'message': questions[currentStep + 1],
+        currentStep++;
+
+        // Only add the next question if we haven't reached the end
+        if (currentStep < questions.length) {
+          Future.delayed(const Duration(milliseconds: 300), () {
+            setState(() {
+              chatHistory.add({
+                'type': 'bot',
+                'message': questions[currentStep],
+              });
+            });
+            _scrollToBottom();
           });
         }
-        currentStep++;
       } else if (userInput.toLowerCase() == 'yes') {
         _createDeliveryTicket();
+      } else {
+        // Add validation for final confirmation
+        chatHistory.add({
+          'type': 'bot',
+          'message':
+              "❗ Please type 'yes' to confirm and create the delivery ticket, or provide a different response to cancel.",
+        });
       }
     });
+
+    if (currentStep < questions.length) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _audioPlayer.play(AssetSource('sounds/message_received.mp3'));
+        setState(() {
+          chatHistory.add({
+            'type': 'bot',
+            'message': questions[currentStep],
+          });
+        });
+      });
+    }
 
     _inputController.clear();
     _scrollToBottom();

@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shimmer/shimmer.dart';
 import '../assistants/assistant_methods.dart';
 import '../models/items.dart';
 import '../widget/appbar.dart';
@@ -17,217 +18,312 @@ class ItemDetailsScreen extends StatefulWidget {
   State<ItemDetailsScreen> createState() => _ItemDetailsScreenState();
 }
 
-class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
-  // TextEditingController numberCounterController = TextEditingController();
+class _ItemDetailsScreenState extends State<ItemDetailsScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
   int numberCounterController = 1;
-
   int max = 9;
-  int min = 2;
+  int min = 1;
+
+  // Add these animations to the state class
+  late AnimationController _scaleController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
+    _fadeController.forward();
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: MyAppBar(sellerUID: widget.model!.sellerUID),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.width - (40),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: const [
-                  BoxShadow(
-                      color: Colors.grey, offset: Offset(3, 3), blurRadius: 5)
-                ],
-                image: DecorationImage(
-                  image: NetworkImage(widget.model!.thumbnailUrl!),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: const [
-                  BoxShadow(
-                      color: Colors.grey, offset: Offset(3, 3), blurRadius: 5)
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        FloatingActionButton(
-                          heroTag: 'add',
-                          onPressed: () {
-                            setState(() {
-                              if (numberCounterController <= max) {
-                                numberCounterController++;
-                              } else {
-                                print('CANT GO PAST 10');
-                              }
-                            });
-                          },
-                          child: const Icon(FontAwesomeIcons.plus),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Hero(
+                tag: 'item-${widget.model!.itemID}',
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Stack(
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl: widget.model!.thumbnailUrl!,
+                        height: double.infinity,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(color: Colors.white),
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          numberCounterController.toString(),
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        FloatingActionButton(
-                          heroTag: 'minus',
-                          onPressed: () {
-                            setState(() {
-                              if (numberCounterController >= min) {
-                                numberCounterController--;
-                              } else {
-                                print('OUTTa BOUND');
-                              }
-                            });
-                          },
-                          child: const Icon(
-                            FontAwesomeIcons.minus,
-                            color: Colors.red,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.3),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          flex: 2,
                           child: Text(
                             widget.model!.title!,
                             style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  "₦${widget.model!.price! - (widget.model!.price! * (0) / 100)}",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
-                                ),
-                                Text(
-                                  "₦${widget.model!.price}.00",
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey,
-                                      decoration: TextDecoration.lineThrough),
-                                ),
-                              ],
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
                             ),
                           ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    const Row(
-                      children: [
-                        MyMacroWidget(
-                          title: "Calories",
-                          value: 100,
-                          icon: FontAwesomeIcons.fire,
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        MyMacroWidget(
-                          title: "Protein",
-                          value: 50,
-                          icon: FontAwesomeIcons.dumbbell,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        MyMacroWidget(
-                          title: "Fat",
-                          value: 50,
-                          icon: FontAwesomeIcons.oilWell,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        MyMacroWidget(
-                          title: "Carbs",
-                          value: 100,
-                          icon: FontAwesomeIcons.breadSlice,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              "₦${widget.model!.price}",
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                            if (widget.model!.price! > 1000)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.green.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: const Text(
+                                  'Best Value',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ],
                     ),
-                    const SizedBox(
-                      height: 40,
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Quantity',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
+                      ),
                     ),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildCounterButton(
+                            icon: Icons.remove,
+                            onPressed: () {
+                              if (numberCounterController > min) {
+                                setState(() => numberCounterController--);
+                              }
+                            },
+                            color: Colors.red,
+                          ),
+                          const SizedBox(width: 20),
+                          Text(
+                            numberCounterController.toString(),
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          _buildCounterButton(
+                            icon: Icons.add,
+                            onPressed: () {
+                              if (numberCounterController < max) {
+                                setState(() => numberCounterController++);
+                              }
+                            },
+                            color: Colors.green,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // Replace the SingleChildScrollView in the nutritional information section with:
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Nutritional Information',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      child: Row(
+                        children: [
+                          MyMacroWidget(
+                            title: "Calories",
+                            value: 100,
+                            icon: FontAwesomeIcons.fire,
+                          ),
+                          SizedBox(width: 12),
+                          MyMacroWidget(
+                            title: "Protein",
+                            value: 50,
+                            icon: FontAwesomeIcons.dumbbell,
+                          ),
+                          SizedBox(width: 12),
+                          MyMacroWidget(
+                            title: "Fat",
+                            value: 50,
+                            icon: FontAwesomeIcons.oilWell,
+                          ),
+                          SizedBox(width: 12),
+                          MyMacroWidget(
+                            title: "Carbs",
+                            value: 100,
+                            icon: FontAwesomeIcons.breadSlice,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 30),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: 50,
-                      child: TextButton(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton(
                         onPressed: () {
-                          int itemCounter =
-                              int.parse(numberCounterController.toString());
+                          int itemCounter = numberCounterController;
                           List<String> separateItemIDsList = seperateItemIDs();
 
-                          // Check if item exists in cart
                           if (separateItemIDsList
                               .contains(widget.model!.itemID)) {
-                            Fluttertoast.showToast(msg: 'Item already in cart');
+                            Fluttertoast.showToast(
+                              msg: 'Item already in cart',
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                            );
                           } else {
                             addItemTocart(
-                                widget.model!.itemID, context, itemCounter);
+                              widget.model!.itemID,
+                              context,
+                              itemCounter,
+                            );
                           }
                         },
-                        style: TextButton.styleFrom(
-                            elevation: 3.0,
-                            backgroundColor: Colors.black,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          elevation: 2,
+                        ),
                         child: const Text(
-                          "Add Now",
+                          "Add to Cart",
                           style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600),
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
-            )
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCounterButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+    required Color color,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        onPressed: onPressed,
+        icon: Icon(icon, color: color),
+        splashRadius: 24,
       ),
     );
   }
