@@ -536,8 +536,8 @@ class _DeliveryPageState extends State<DeliveryPage>
       child: ListTile(
         title: Text(request['packageName']?.toString() ?? 'No name'),
         subtitle:
-            Text(request['packageDestination']?.toString() ?? 'No address'),
-        trailing: Text('₦${request['bill']?.toString() ?? '0'}'),
+            Text("To: ${request['receiverName']?.toString()}" ?? 'No address'),
+        trailing: Text(request['status']?.toString() ?? '0'),
         onTap: () => _showTrackingCard(request, docId),
       ),
     );

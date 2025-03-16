@@ -101,7 +101,6 @@ flutter:
   assets:
     - images/
     - assets/animations/
-    - assets/images/
     - assets/sounds/
 
     

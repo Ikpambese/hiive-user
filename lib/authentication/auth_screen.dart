@@ -73,10 +73,22 @@ class _AuthScreenState extends State<AuthScreen>
                 children: [
                   const SizedBox(height: 20),
                   // Logo Animation
-                  Lottie.network(
-                    'https://assets5.lottiefiles.com/packages/lf20_t9gkkhz4.json',
-                    height: 200,
-                    repeat: true,
+                  Container(
+                    height: 220,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('images/honeycomb.png'),
+                        fit: BoxFit.contain,
+                        opacity: 0.2, // Semi-transparent background
+                      ),
+                    ),
+                    child: Center(
+                      child: Lottie.network(
+                        'https://assets5.lottiefiles.com/packages/lf20_t9gkkhz4.json',
+                        height: 200,
+                        repeat: true,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 20),
                   // Animated Welcome Text
