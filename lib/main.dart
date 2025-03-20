@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hiiveuser/firebase_options.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +10,8 @@ import 'assistants/cartitem_counter.dart';
 import 'assistants/total_amount.dart';
 import 'global/global.dart';
 import 'splash/splash_screen.dart';
-import 'services/notification_service.dart';
+
+import 'providers/theme_provider.dart';
 
 void initializeNotifications() async {
   await FlutterLocalNotificationsPlugin().initialize(
@@ -28,10 +28,21 @@ void initializeNotifications() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   sharedPreferences = await SharedPreferences.getInstance();
-  initializeNotifications(); // Add this line
-  runApp(const MyApp());
+  initializeNotifications();
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (c) => CartItemCounter()),
+        ChangeNotifierProvider(create: (c) => TotalAmount()),
+        ChangeNotifierProvider(create: (c) => AddressChanger()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -39,66 +50,60 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (c) => CartItemCounter()),
-        ChangeNotifierProvider(create: (c) => TotalAmount()),
-        ChangeNotifierProvider(create: (c) => AddressChanger()),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Seller App',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: const MySplashScreen(),
-        builder: (context, child) {
-          // Add error boundary for the entire app
-          ErrorWidget.builder = (FlutterErrorDetails details) {
-            bool isInDebugMode = false;
-            assert(() {
-              isInDebugMode = true;
-              return true;
-            }());
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Hiive',
+          theme: themeProvider.themeData,
+          home: const MySplashScreen(),
+          builder: (context, child) {
+            ErrorWidget.builder = (FlutterErrorDetails details) {
+              bool isInDebugMode = false;
+              assert(() {
+                isInDebugMode = true;
+                return true;
+              }());
 
-            return Material(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      color: Colors.red,
-                      size: 60,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      isInDebugMode
-                          ? 'An error occurred: ${details.exception}'
-                          : 'An error occurred. Please try again later.',
-                      style: const TextStyle(color: Colors.red),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+              return Material(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        color: Theme.of(context).colorScheme.error,
+                        size: 60,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        isInDebugMode
+                            ? 'An error occurred: ${details.exception}'
+                            : 'An error occurred. Please try again later.',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.error),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
                 ),
+              );
+            };
+
+            if (child == null) {
+              return const SizedBox.shrink();
+            }
+
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: const TextScaler.linear(1.0),
               ),
+              child: child,
             );
-          };
-
-          // Add null check for child widget
-          if (child == null) {
-            return const SizedBox.shrink();
-          }
-
-          return MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaler: const TextScaler.linear(1.0),
-            ),
-            child: child,
-          );
-        },
-      ),
+          },
+        );
+      },
     );
   }
 }

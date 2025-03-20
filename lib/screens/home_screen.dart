@@ -11,6 +11,7 @@ import '../splash/splash_screen.dart';
 import '../widget/bottom_nav.dart';
 import '../widget/my_drawer.dart';
 import '../widget/sellersdesign.dart';
+import 'my_profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,7 +30,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_fadeController);
+    _fadeAnimation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(_fadeController);
     _fadeController.forward();
 
     restrictctBlockedeUser();
@@ -79,7 +81,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.notifications_active, color: Colors.white),
+                        const Icon(Icons.notifications_active,
+                            color: Colors.white),
                         const SizedBox(width: 10),
                         const Text(
                           'Notification',
@@ -147,11 +150,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       },
     );
   }
+
   @override
   void dispose() {
     _fadeController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -196,12 +201,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ],
                 ),
                 child: ClipOval(
-                  child: Image.network(
-                    sharedPreferences?.getString('photoUrl') ??
-                        'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
-                    height: 40,
-                    width: 40,
-                    fit: BoxFit.cover,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MyProfileScreen()),
+                      );
+                    },
+                    child: Image.network(
+                      sharedPreferences?.getString('photoUrl') ??
+                          'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
+                      height: 40,
+                      width: 40,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
@@ -223,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
+                      color: Colors.grey.withAlpha(77),
                       spreadRadius: 2,
                       blurRadius: 7,
                       offset: const Offset(0, 3),

@@ -112,7 +112,7 @@ class _DeliveryPageState extends State<DeliveryPage>
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Color.fromRGBO(0, 0, 0, 0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -430,9 +430,8 @@ class _DeliveryPageState extends State<DeliveryPage>
         // Show success message and start new chat
         chatHistory.add({
           'type': 'bot',
-          'message': 'Delivery ticket created successfully!\n\n' +
-              'Let\'s create a new delivery ticket!\n\n' +
-              questions[0],
+          'message':
+              'Delivery ticket created successfully!\n\nLet\'s create a new delivery ticket!\n\n${questions[0]}',
         });
       });
     }).catchError((error) {
@@ -510,12 +509,84 @@ class _DeliveryPageState extends State<DeliveryPage>
           );
         });
       },
-      child: ListTile(
-        title: Text(request['packageName']?.toString() ?? 'No name'),
-        subtitle:
-            Text("To: ${request['receiverName']?.toString()}" ?? 'No address'),
-        trailing: Text(request['status']?.toString() ?? '0'),
-        onTap: () => _showTrackingCard(request, docId),
+      child: Card(
+        elevation: 2,
+        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: Colors.amber.withOpacity(0.2)),
+        ),
+        child: ListTile(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          leading: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.amber.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.local_shipping, color: Colors.amber),
+          ),
+          title: Text(
+            request['packageName']?.toString() ?? 'No name',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(Icons.person_outline,
+                      size: 16, color: Colors.grey),
+                  const SizedBox(width: 4),
+                  Text(
+                    "To: ${request['receiverName']?.toString()}" ??
+                        'No address',
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 2),
+              Row(
+                children: [
+                  const Icon(Icons.access_time, size: 16, color: Colors.grey),
+                  const SizedBox(width: 4),
+                  Text(
+                    (request['timestamp'] as Timestamp?)
+                            ?.toDate()
+                            .toString()
+                            .split('.')[0] ??
+                        'N/A',
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          trailing: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: _getStatusColor(request['status']?.toString()),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              request['status']?.toString() ?? 'Pending',
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          onTap: () => _showTrackingCard(request, docId),
+        ),
       ),
     );
   }
@@ -591,5 +662,20 @@ class TexformWidget extends StatelessWidget {
         border: const OutlineInputBorder(),
       ),
     );
+  }
+}
+
+Color _getStatusColor(String? status) {
+  switch (status?.toLowerCase()) {
+    case 'pending':
+      return Colors.orange;
+    case 'in progress':
+      return Colors.blue;
+    case 'delivered':
+      return Colors.green;
+    case 'cancelled':
+      return Colors.red;
+    default:
+      return Colors.grey;
   }
 }
