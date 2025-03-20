@@ -5,11 +5,11 @@
     <key>NSCameraUsageDescription</key>
     <string>This app needs camera access to scan QR codes and barcodes</string>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>We need access to your location to provide location-based services.</string>
+    <string>This app needs access to location when open to provide delivery services.</string>
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>We need access to your location to provide location-based services even when the app is in the background.</string>
+    <string>This app needs access to location when in the background for delivery tracking.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>We need access to your location to provide location-based services at all times.</string>
+    <string>This app needs access to location when open and in the background for delivery services.</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>

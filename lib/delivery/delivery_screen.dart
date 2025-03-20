@@ -224,26 +224,15 @@ class _DeliveryPageState extends State<DeliveryPage>
               child: ListView.builder(
                 controller: _scrollController,
                 padding: const EdgeInsets.all(16),
-                itemCount: chatHistory.length + 1,
+                itemCount: chatHistory.length +
+                    (currentStep < questions.length ? 1 : 0),
                 itemBuilder: (context, index) {
                   if (index < chatHistory.length) {
                     return _buildAnimatedChatMessage(chatHistory[index]);
-                  } else if (currentStep < questions.length) {
+                  } else if (currentStep < questions.length &&
+                      chatHistory.isEmpty) {
                     return _buildAnimatedChatMessage(
                         {'type': 'bot', 'message': questions[currentStep]});
-                  } else if (currentStep == questions.length) {
-                    String summary = "📦 Delivery Request Summary\n\n";
-                    for (int i = 0; i < questions.length; i++) {
-                      summary +=
-                          "${questions[i]}\n${deliveryData[fields[i]]}\n\n";
-                    }
-                    summary +=
-                        "\n✨ Type 'yes' to confirm and create the delivery ticket";
-
-                    return _buildAnimatedChatMessage({
-                      'type': 'bot',
-                      'message': summary,
-                    });
                   }
                   return const SizedBox.shrink();
                 },
@@ -378,7 +367,7 @@ class _DeliveryPageState extends State<DeliveryPage>
   // Update _handleSubmit to include sound effects
   void _handleSubmit() {
     if (_inputController.text.isEmpty) {
-      _audioPlayer.play(AssetSource('sounds/message_error.mp3'));
+      _audioPlayer.play(AssetSource('sounds/yes.wav'));
       setState(() {
         chatHistory.add({
           'type': 'bot',
@@ -403,22 +392,15 @@ class _DeliveryPageState extends State<DeliveryPage>
         deliveryData[fields[currentStep]] = userInput;
         currentStep++;
 
-        // Only add the next question if we haven't reached the end
         if (currentStep < questions.length) {
-          Future.delayed(const Duration(milliseconds: 300), () {
-            setState(() {
-              chatHistory.add({
-                'type': 'bot',
-                'message': questions[currentStep],
-              });
-            });
-            _scrollToBottom();
+          chatHistory.add({
+            'type': 'bot',
+            'message': questions[currentStep],
           });
         }
       } else if (userInput.toLowerCase() == 'yes') {
         _createDeliveryTicket();
       } else {
-        // Add validation for final confirmation
         chatHistory.add({
           'type': 'bot',
           'message':
@@ -426,18 +408,6 @@ class _DeliveryPageState extends State<DeliveryPage>
         });
       }
     });
-
-    if (currentStep < questions.length) {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _audioPlayer.play(AssetSource('sounds/message_received.mp3'));
-        setState(() {
-          chatHistory.add({
-            'type': 'bot',
-            'message': questions[currentStep],
-          });
-        });
-      });
-    }
 
     _inputController.clear();
     _scrollToBottom();
@@ -449,6 +419,7 @@ class _DeliveryPageState extends State<DeliveryPage>
       'status': 'Pending',
       'bill': 0.0,
       'timestamp': DateTime.now(),
+      'userId': sharedPreferences!.getString('uid'), // Add user ID to ticket
     }).then((_) {
       setState(() {
         // Clear everything and start fresh
@@ -475,6 +446,12 @@ class _DeliveryPageState extends State<DeliveryPage>
   }
 
   Widget _buildHistoryTile(Map<String, dynamic> request, String docId) {
+    // Only show tickets created by the current user
+    String? currentUserId = sharedPreferences!.getString('uid');
+    if (request['userId'] != currentUserId) {
+      return const SizedBox.shrink();
+    }
+
     return Dismissible(
       key: Key(docId),
       background: Container(

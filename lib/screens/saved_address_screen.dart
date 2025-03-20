@@ -25,27 +25,84 @@ class SaveAddressScreen extends StatelessWidget {
   SaveAddressScreen({super.key});
 
   getUserLocationAddress() async {
-    Position newposition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    position = newposition;
-    placemarks =
-        await placemarkFromCoordinates(position!.latitude, position!.longitude);
+    try {
+      // Check if location service is enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        Fluttertoast.showToast(
+          msg: 'Please enable location services in your device settings',
+          backgroundColor: Colors.red,
+        );
+        return;
+      }
 
-    Placemark placemark = placemarks![0];
+      // Check location permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          Fluttertoast.showToast(
+            msg: 'Location permissions are required to get your address',
+            backgroundColor: Colors.red,
+          );
+          return;
+        }
+      }
 
-    String fullAddress =
-        '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea} ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
+      if (permission == LocationPermission.deniedForever) {
+        Fluttertoast.showToast(
+          msg: 'Please enable location permissions in app settings',
+          backgroundColor: Colors.red,
+        );
+        await Geolocator.openAppSettings();
+        return;
+      }
 
-    _locationController.text = fullAddress;
-    _flatNumber.text =
-        '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}';
+      // Show loading indicator
+      Fluttertoast.showToast(
+        msg: 'Getting your location...',
+        backgroundColor: Colors.amber,
+      );
 
-    _city.text =
-        '${placemark.subAdministrativeArea} ${placemark.administrativeArea} ${placemark.postalCode}';
+      // Get current position with longer timeout
+      position = await Geolocator.getCurrentPosition(
+        locationSettings: LocationSettings(
+          accuracy: LocationAccuracy.best,
+        ),
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw Exception('Location request timed out. Please try again.');
+        },
+      );
 
-    _state.text = '${placemark.country}';
+      // Get address from coordinates
+      placemarks = await placemarkFromCoordinates(
+        position!.latitude,
+        position!.longitude,
+      );
 
-    _completeAddress.text = fullAddress;
+      Placemark placemark = placemarks![0];
+      print(placemark);
+      String fullAddress =
+          '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea} ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
+
+      _locationController.text = fullAddress;
+      _flatNumber.text =
+          '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}';
+
+      _city.text =
+          '${placemark.subAdministrativeArea} ${placemark.administrativeArea} ${placemark.postalCode}';
+
+      _state.text = '${placemark.country}';
+
+      _completeAddress.text = fullAddress;
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: 'Error getting location: ${e.toString()}',
+        backgroundColor: Colors.red,
+      );
+    }
   }
 
   @override

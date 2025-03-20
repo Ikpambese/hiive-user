@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hiiveuser/firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,34 +13,25 @@ import 'global/global.dart';
 import 'splash/splash_screen.dart';
 import 'services/notification_service.dart';
 
-Future<void> main() async {
-  try {
-    WidgetsFlutterBinding.ensureInitialized();
-
-    // Initialize local data with error handling
-    sharedPreferences = await SharedPreferences.getInstance();
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
-
-    // Initialize notifications
-    await NotificationService.initialize();
-
-    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
-    runApp(const MyApp());
-  } catch (e, stackTrace) {
-    print('Error during initialization: $e');
-    print('Stack trace: $stackTrace');
-    runApp(
-      MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: Text('Error initializing app: $e'),
-          ),
-        ),
+void initializeNotifications() async {
+  await FlutterLocalNotificationsPlugin().initialize(
+    InitializationSettings(
+      iOS: DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
       ),
-    );
-  }
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+    ),
+  );
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  sharedPreferences = await SharedPreferences.getInstance();
+  initializeNotifications(); // Add this line
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
