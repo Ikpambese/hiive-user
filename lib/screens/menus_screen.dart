@@ -85,13 +85,17 @@ class _MenusScreenState extends State<MenusScreen>
               ),
             ),
             const SizedBox(width: 12),
-            Text(
-              widget.model!.sellerName!,
-              style: const TextStyle(
-                fontSize: 24,
-                fontFamily: 'Acme',
-                color: Colors.white,
-                letterSpacing: 1,
+            Flexible(
+              child: Text(
+                widget.model!.sellerName!,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontFamily: 'Acme',
+                  color: Colors.white,
+                  letterSpacing: 1,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
           ],

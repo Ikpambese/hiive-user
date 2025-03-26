@@ -106,11 +106,11 @@ class _BottomNavState extends State<BottomNav>
             child: GNav(
               selectedIndex: _selectedIndex,
               onTabChange: navigateBottom,
-              gap: 8,
+              gap: 4, // Reduced from 6
               color: Colors.grey[400],
               activeColor: Colors.amber,
               tabBackgroundColor: Colors.amber.withOpacity(0.1),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12), // Reduced from 12
               duration: const Duration(milliseconds: 300),
               tabBorderRadius: 20,
               curve: Curves.easeInOut,
@@ -119,7 +119,7 @@ class _BottomNavState extends State<BottomNav>
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.amber,
-              ),
+              ), 
               tabs: [
                 GButton(
                   icon: Icons.home_rounded,

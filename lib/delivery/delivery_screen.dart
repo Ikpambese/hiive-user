@@ -71,7 +71,7 @@ class _DeliveryPageState extends State<DeliveryPage>
     "What's the receiver's name?",
     "What's the receiver's phone number?",
     "What's the receiver's address?",
-    "What's the receiver's alternate phone number?",
+    "What's the receiver's alternate phone number? Enter yes to create the ticket",
   ];
 
   final List<String> fields = [
