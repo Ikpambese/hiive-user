@@ -7,6 +7,7 @@ import '../global/global.dart';
 import '../widget/custom_text_field.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
+import '../authentication/auth_screen.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({Key? key}) : super(key: key);
@@ -95,6 +96,73 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           SnackBar(content: Text('Error uploading image: $e')),
         );
       } finally {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  // Add this method to handle profile deletion
+  Future<void> _deleteProfile() async {
+    final confirmed = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Profile'),
+        content: const Text('Are you sure you want to delete your profile? This action cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      setState(() => _isLoading = true);
+      try {
+        final uid = sharedPreferences!.getString('uid');
+        if (uid != null) {
+          // Delete user data from Firestore
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(uid)
+              .delete();
+
+          // Delete profile picture from Storage if exists
+          if (_imageUrl != null) {
+            try {
+              await FirebaseStorage.instance
+                  .refFromURL(_imageUrl!)
+                  .delete();
+            } catch (e) {
+              // Handle storage deletion error
+            }
+          }
+
+          // Clear shared preferences
+          await sharedPreferences!.clear();
+          
+          // Navigate to auth screen and remove all previous routes
+          if (mounted) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const AuthScreen()),
+              (route) => false,
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error deleting profile: $e')),
+          );
+        }
+      }
+      if (mounted) {
         setState(() => _isLoading = false);
       }
     }
@@ -209,10 +277,30 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () => setState(() => _isEditing = false),
-                child:
-                    const Text('Cancel', style: TextStyle(color: Colors.red)),
+                child: const Text('Cancel', style: TextStyle(color: Colors.red)),
               ),
             ],
+            
+            // Add Delete Profile Button
+            const SizedBox(height: 32),
+            TextButton.icon(
+              onPressed: _isLoading ? null : _deleteProfile,
+              icon: const Icon(Icons.delete_forever, color: Colors.red),
+              label: const Text(
+                'Delete Profile',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: const BorderSide(color: Colors.red),
+                ),
+              ),
+            ),
           ],
         ),
       ),

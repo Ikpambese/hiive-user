@@ -397,14 +397,19 @@ class _DeliveryPageState extends State<DeliveryPage>
             'type': 'bot',
             'message': questions[currentStep],
           });
+        } else {
+          // Add this confirmation message when all questions are answered
+          chatHistory.add({
+            'type': 'bot',
+            'message': "Great! All information has been collected.\n\nPlease type 'yes' to create your delivery ticket or any other response to cancel.",
+          });
         }
       } else if (userInput.toLowerCase() == 'yes') {
         _createDeliveryTicket();
       } else {
         chatHistory.add({
           'type': 'bot',
-          'message':
-              "❗ Please type 'yes' to confirm and create the delivery ticket, or provide a different response to cancel.",
+          'message': "❗ Please type 'yes' to confirm and create the delivery ticket, or provide a different response to cancel.",
         });
       }
     });
