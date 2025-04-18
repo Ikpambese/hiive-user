@@ -148,56 +148,88 @@ class _AddressDesignState extends State<AddressDesign>
                             Provider.of<AddressChanger>(context).count) ...[
                           const SizedBox(width: 12),
                           Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                OyaPay(
-                                  logistics:
-                                      sharedPreferences!.getInt('logistics')!,
-                                  ctx: context,
-                                  price: widget.totalAmount!.toInt(),
-                                  email: sharedPreferences!.getString('email')!,
-                                ).handlePaymentInitialization((bool success) {
-                                  if (success) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => PlacedOrderScreen(
-                                          addressID: widget.addressID,
-                                          totalAmount: widget.totalAmount,
-                                          sellerUID: widget.sellerUID,
-                                        ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      OyaPay(
+                                        logistics: sharedPreferences!.getInt('logistics')!,
+                                        ctx: context,
+                                        price: widget.totalAmount!.toInt(),
+                                        email: sharedPreferences!.getString('email')!,
+                                      ).handlePaymentInitialization((bool success) {
+                                        if (success) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => PlacedOrderScreen(
+                                                addressID: widget.addressID,
+                                                totalAmount: widget.totalAmount,
+                                                sellerUID: widget.sellerUID,
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              title: const Text("Error"),
+                                              content: const Text(
+                                                  "Payment failed. Please try again."),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: const Text("OK"),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }
+                                      });
+                                    },
+                                    icon: const Icon(Icons.payment),
+                                    label: const Text('Pay Now'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.amber,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
-                                    );
-                                  } else {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        title: const Text("Error"),
-                                        content: const Text(
-                                            "Payment failed. Please try again."),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: const Text("OK"),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                });
-                              },
-                              icon: const Icon(Icons.payment),
-                              label: const Text('Pay Now'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.amber,
-                                foregroundColor: Colors.white,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => PlacedOrderScreen(
+                                            addressID: widget.addressID,
+                                            totalAmount: widget.totalAmount,
+                                            sellerUID: widget.sellerUID,
+                                            paymentMethod: 'Online',  // Add this line
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.delivery_dining),
+                                    label: const Text('Pay on Delivery'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.grey[800],
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],

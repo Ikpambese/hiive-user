@@ -9,11 +9,20 @@ import '../global/global.dart';
 import 'home_screen.dart';
 
 class PlacedOrderScreen extends StatefulWidget {
-  String? addressID;
-  double? totalAmount;
-  String? sellerUID;
-  PlacedOrderScreen(
-      {super.key, this.addressID, this.sellerUID, this.totalAmount});
+  // Changed from StatelessWidget to StatefulWidget
+  final String? addressID;
+  final double? totalAmount;
+  final String? sellerUID;
+  final String? paymentMethod;
+
+  const PlacedOrderScreen({
+    super.key,
+    this.addressID,
+    this.totalAmount,
+    this.sellerUID,
+    this.paymentMethod = 'Online',
+  });
+
   @override
   State<PlacedOrderScreen> createState() => _PlacedOrderScreenState();
 }
@@ -26,7 +35,7 @@ class _PlacedOrderScreenState extends State<PlacedOrderScreen> {
       'totalAmount': widget.totalAmount,
       'orderBy': sharedPreferences!.getString('uid'),
       'productIDs': sharedPreferences!.getStringList('userCart'),
-      'paymentDetails': 'Cash on Delivery',
+      'paymentDetails': widget.paymentMethod,
       'orderTime': orderId,
       'isSuccess': true,
       'sellerUID': widget.sellerUID,
@@ -39,7 +48,7 @@ class _PlacedOrderScreenState extends State<PlacedOrderScreen> {
       'totalAmount': widget.totalAmount,
       'orderBy': sharedPreferences!.getString('uid'),
       'productIDs': sharedPreferences!.getStringList('userCart'),
-      'paymentDetails': 'Cash on Delivery',
+      'paymentDetails': widget.paymentMethod,
       'orderTime': orderId,
       'isSuccess': true,
       'sellerUID': widget.sellerUID,
