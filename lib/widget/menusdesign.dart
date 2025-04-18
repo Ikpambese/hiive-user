@@ -7,10 +7,16 @@ import '../models/menu_model.dart';
 import '../screens/items_screen.dart';
 
 class MenusDesignWidget extends StatefulWidget {
-  Menus? model;
-  BuildContext? context;
+  final Menus? model;
+  final BuildContext? context;
+  final Function(BuildContext, VoidCallback)? handleProtectedFeature;
 
-  MenusDesignWidget({super.key, this.model, this.context});
+  const MenusDesignWidget({
+    super.key,
+    this.model,
+    this.context,
+    this.handleProtectedFeature,
+  });
 
   @override
   _MenusDesignWidgetState createState() => _MenusDesignWidgetState();
@@ -72,7 +78,7 @@ class _MenusDesignWidgetState extends State<MenusDesignWidget>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ItemsScrenn(model: widget.model),
+                    builder: (context) => ItemsScreen(model: widget.model),
                   ),
                 );
               },

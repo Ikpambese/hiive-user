@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-
 import '../models/sellers.dart';
 import '../screens/menus_screen.dart';
 
+// ignore: must_be_immutable
 class SellersDesign extends StatefulWidget {
   Sellers? model;
   BuildContext? context;

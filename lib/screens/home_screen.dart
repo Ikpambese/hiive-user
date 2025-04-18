@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../assistants/assistant_methods.dart';
+import '../authentication/auth_screen.dart';
 import '../global/global.dart';
 import '../models/sellers.dart';
 import '../splash/splash_screen.dart';
@@ -34,133 +37,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         Tween<double>(begin: 0.0, end: 1.0).animate(_fadeController);
     _fadeController.forward();
 
-    restrictctBlockedeUser();
-    clearCartNow(context);
-    getCompany().then((_) {
-      if (mounted && sharedPreferences?.getString('message') != null) {
-        _showNotificationCard();
-      }
-    });
-  }
-
-  void _showNotificationCard() {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '',
-      barrierColor: Colors.black.withOpacity(0.5),
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, animation1, animation2) {
-        return Center(
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.amber.withOpacity(0.3),
-                    blurRadius: 15,
-                    spreadRadius: 5,
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(15),
-                    decoration: const BoxDecoration(
-                      color: Colors.amber,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.notifications_active,
-                            color: Colors.white),
-                        const SizedBox(width: 10),
-                        const Text(
-                          'Notification',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Spacer(),
-                        IconButton(
-                          icon: const Icon(Icons.close, color: Colors.white),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Text(
-                      sharedPreferences?.getString('message') ?? '',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black87,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 30,
-                          vertical: 12,
-                        ),
-                      ),
-                      child: const Text(
-                        'Got it!',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        return ScaleTransition(
-          scale: Tween<double>(begin: 0.5, end: 1.0).animate(
-            CurvedAnimation(
-              parent: animation,
-              curve: Curves.elasticOut,
-            ),
-          ),
-          child: child,
-        );
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _fadeController.dispose();
-    super.dispose();
+    // Only run these if user is logged in
+    if (firebaseAuth.currentUser != null) {
+      restrictctBlockedeUser();
+      clearCartNow(context);
+      getCompany().then((_) {
+        if (mounted && sharedPreferences?.getString('message') != null) {
+          _showNotificationCard();
+        }
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final bool isLoggedIn = firebaseAuth.currentUser != null;
+
     return Scaffold(
-      bottomNavigationBar: BottomNav(),
+      bottomNavigationBar: isLoggedIn ? BottomNav() : null,
       appBar: AppBar(
         title: AnimatedTextKit(
           animatedTexts: [
@@ -186,45 +80,62 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         shadowColor: Colors.amber.withOpacity(0.5),
         iconTheme: const IconThemeData(color: Colors.amber),
         actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 10, top: 5),
-            child: Hero(
-              tag: 'profilePic',
-              child: Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.amber.withOpacity(0.3),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                    ),
-                  ],
-                ),
-                child: ClipOval(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const MyProfileScreen()),
-                      );
-                    },
-                    child: Image.network(
-                      sharedPreferences?.getString('photoUrl') ??
-                          'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
-                      height: 40,
-                      width: 40,
-                      fit: BoxFit.cover,
+          if (isLoggedIn)
+            Container(
+              margin: const EdgeInsets.only(right: 10, top: 5),
+              child: Hero(
+                tag: 'profilePic',
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.amber.withOpacity(0.3),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const MyProfileScreen()),
+                        );
+                      },
+                      child: Image.network(
+                        sharedPreferences?.getString('photoUrl') ??
+                            'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
+                        height: 40,
+                        width: 40,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
+          if (!isLoggedIn)
+            TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AuthScreen()),
+                );
+              },
+              child: const Text(
+                'Login',
+                style: TextStyle(
+                  color: Colors.amber,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
         ],
         centerTitle: true,
       ),
-      drawer: MyDrawer(),
+      drawer: isLoggedIn ? MyDrawer() : null,
       body: FadeTransition(
         opacity: _fadeAnimation,
         child: CustomScrollView(
@@ -414,5 +325,150 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       print('Logistics: $logistics');
       print('Message: $message');
     }
+  }
+
+  // Add this method to handle protected features
+  void _handleProtectedFeature(BuildContext context, VoidCallback action) {
+    if (firebaseAuth.currentUser == null) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Login Required'),
+          content: const Text('Please login to access this feature.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AuthScreen()),
+                );
+              },
+              child: const Text('Login', style: TextStyle(color: Colors.amber)),
+            ),
+          ],
+        ),
+      );
+    } else {
+      action();
+    }
+  }
+
+  void _showNotificationCard() {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: '',
+      barrierColor: Colors.black.withOpacity(0.5),
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (context, animation1, animation2) {
+        return Center(
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.amber.withOpacity(0.3),
+                    blurRadius: 15,
+                    spreadRadius: 5,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(15),
+                    decoration: const BoxDecoration(
+                      color: Colors.amber,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.notifications_active,
+                            color: Colors.white),
+                        const SizedBox(width: 10),
+                        const Text(
+                          'Notification',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.close, color: Colors.white),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Text(
+                      sharedPreferences?.getString('message') ?? '',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.amber,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 12,
+                        ),
+                      ),
+                      child: const Text(
+                        'Got it!',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return ScaleTransition(
+          scale: Tween<double>(begin: 0.5, end: 1.0).animate(
+            CurvedAnimation(
+              parent: animation,
+              curve: Curves.elasticOut,
+            ),
+          ),
+          child: child,
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    super.dispose();
   }
 }
