@@ -27,8 +27,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen>
   int min = 1;
 
   // Add these animations to the state class
-  late AnimationController _scaleController;
-  late Animation<double> _scaleAnimation;
+// Removed unused _scaleController field
 
   @override
   void initState() {

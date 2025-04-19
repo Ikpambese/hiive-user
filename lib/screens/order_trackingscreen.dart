@@ -1,325 +1,229 @@
-// // ignore_for_file: import_of_legacy_library_into_null_safe
+// ignore_for_file: import_of_legacy_library_into_null_safe
 
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:timeline_tile/timeline_tile.dart';
+import '../global/global.dart';
+import '../widget/simple_appbar.dart';
 
-// // import 'package:vertical_stepper/vertical_stepper.dart';
-// // import 'package:vertical_stepper/vertical_stepper.dart' as step;
+class TrackerScreen extends StatefulWidget {
+  final String? orderID;
+  const TrackerScreen({this.orderID});
 
-// import '../global/global.dart';
-// import '../widget/simple_appbar.dart';
+  @override
+  State<TrackerScreen> createState() => _TrackerScreenState();
+}
 
-// class TrackerScreen extends StatefulWidget {
-//   final String? orderID;
-//   const TrackerScreen({this.orderID});
+class _TrackerScreenState extends State<TrackerScreen>
+    with TickerProviderStateMixin {
+  String status = '';
+  bool isLoading = true;
 
-//   @override
-//   State<TrackerScreen> createState() => _TrackerScreenState();
-// }
+  Future<void> getStatus() async {
+    try {
+      DocumentSnapshot orderDoc = await FirebaseFirestore.instance
+          // .collection('users')
+          // .doc(sharedPreferences!.getString('uid'))
+          .collection('orders')
+          .doc(widget.orderID)
+          .get();
 
-// class _TrackerScreenState extends State<TrackerScreen>
-//     with TickerProviderStateMixin {
-//   String status = '';
-//   getStatus() {
-//     FirebaseFirestore.instance
-//         .collection('users')
-//         .doc(sharedPreferences!.getString('uid'))
-//         .collection('orders')
-//         .doc(widget.orderID)
-//         .get()
-//         .then((snap) {
-//       setState(() {
-//         status = snap.data()!['status'];
-//         print('fetched');
-//         print(status);
-//         print('fetched');
-//       });
-//     });
-//   }
+      if (mounted && orderDoc.exists) {
+        Map<String, dynamic> data = orderDoc.data() as Map<String, dynamic>;
+        setState(() {
+          status = data['status'] ?? 'normal';
+          isLoading = false;
+          print('Status fetched successfully: $status');
+          print('Order ID: ${widget.orderID}');
+        });
+      } else {
+        print('Order document does not exist');
+        setState(() {
+          status = 'normal';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error fetching status: $e');
+      setState(() {
+        status = 'normal';
+        isLoading = false;
+      });
+    }
+  }
 
-//   List<step.Step> steps = [
-//     const step.Step(
-//       shimmer: false,
-//       title: 'Order Placed',
-//       iconStyle: Colors.green,
-//       content: Padding(
-//         padding: EdgeInsets.only(left: 5),
-//         child: Align(
-//           alignment: Alignment.centerLeft,
-//           child: Text('3/3/2023 11:20 Order Created'),
-//         ),
-//       ),
-//     ),
-//     const step.Step(
-//       shimmer: false,
-//       title: 'Order packed',
-//       iconStyle: Colors.amber,
-//       content: Padding(
-//         padding: EdgeInsets.only(left: 5),
-//         child: Align(
-//           alignment: Alignment.centerLeft,
-//           child: Text('3/3/2023 11:25 Order Parcel Ready To Dispatch'),
-//         ),
-//       ),
-//     ),
-//     const step.Step(
-//       shimmer: false,
-//       title: 'Rider underway',
-//       iconStyle: Colors.grey,
-//       content: Align(
-//         alignment: Alignment.centerLeft,
-//         child: Text('3/3/2023 11:25 Parcel Sorted'),
-//       ),
-//     ),
-//     const step.Step(
-//       shimmer: false,
-//       title: 'Rider is at address',
-//       iconStyle: Colors.grey,
-//       content: Align(
-//         alignment: Alignment.centerLeft,
-//         child: Text('3/3/2023 11:25 Parcel has Arrived at address'),
-//       ),
-//     ),
-//   ];
+  @override
+  void initState() {
+    super.initState();
+    getStatus();
+  }
 
-//   List<step.Step> steps2 = [
-//     const step.Step(
-//       shimmer: false,
-//       title: 'Order Placed',
-//       iconStyle: Colors.green,
-//       content: Padding(
-//         padding: EdgeInsets.only(left: 5),
-//         child: Align(
-//           alignment: Alignment.centerLeft,
-//           child: Text('3/3/2023 11:20 Order Created'),
-//         ),
-//       ),
-//     ),
-//     const step.Step(
-//       shimmer: false,
-//       title: 'Order packed',
-//       iconStyle: Colors.green,
-//       content: Padding(
-//         padding: EdgeInsets.only(left: 5),
-//         child: Align(
-//           alignment: Alignment.centerLeft,
-//           child: Text('3/3/2023 11:25 Order Parcel Ready To Dispatch'),
-//         ),
-//       ),
-//     ),
-//     const step.Step(
-//       shimmer: false,
-//       title: 'Rider underway',
-//       iconStyle: Colors.amber,
-//       content: Align(
-//         alignment: Alignment.centerLeft,
-//         child: Text('3/3/2023 11:25 Parcel Sorted'),
-//       ),
-//     ),
-//     const step.Step(
-//       shimmer: false,
-//       title: 'Rider is at address',
-//       iconStyle: Colors.grey,
-//       content: Align(
-//         alignment: Alignment.centerLeft,
-//         child: Text('3/3/2023 11:25 Parcel has Arrived at address'),
-//       ),
-//     ),
-//   ];
+  Widget _buildTimelineTile({
+    required bool isFirst,
+    required bool isLast,
+    required String title,
+    required String time,
+    required bool isCompleted,
+    required bool isActive,
+  }) {
+    return TimelineTile(
+      isFirst: isFirst,
+      isLast: isLast,
+      beforeLineStyle: LineStyle(
+        color: isCompleted ? Colors.green : Colors.grey.shade300,
+      ),
+      indicatorStyle: IndicatorStyle(
+        width: 30,
+        height: 30,
+        indicator: Container(
+          decoration: BoxDecoration(
+            color: isCompleted
+                ? Colors.green
+                : (isActive ? Colors.amber : Colors.grey.shade300),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Colors.white,
+              width: 2,
+            ),
+          ),
+          child: Icon(
+            isCompleted ? Icons.check : Icons.circle,
+            color: Colors.white,
+            size: 15,
+          ),
+        ),
+      ),
+      endChild: Container(
+        constraints: const BoxConstraints(minHeight: 80),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: isCompleted || isActive ? Colors.black : Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              time,
+              style: TextStyle(
+                fontSize: 14,
+                color: isCompleted || isActive ? Colors.black54 : Colors.grey,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-//   List<step.Step> steps3 = [
-//     const step.Step(
-//       shimmer: false,
-//       title: 'Order Placed',
-//       iconStyle: Colors.green,
-//       content: Padding(
-//         padding: EdgeInsets.only(left: 5),
-//         child: Align(
-//           alignment: Alignment.centerLeft,
-//           child: Text('3/3/2023 11:20 Order Created'),
-//         ),
-//       ),
-//     ),
-//     const step.Step(
-//       shimmer: false,
-//       title: 'Order packed',
-//       iconStyle: Colors.green,
-//       content: Padding(
-//         padding: EdgeInsets.only(left: 5),
-//         child: Align(
-//           alignment: Alignment.centerLeft,
-//           child: Text('3/3/2023 11:25 Order Parcel Ready To Dispatch'),
-//         ),
-//       ),
-//     ),
-//     const step.Step(
-//       shimmer: false,
-//       title: 'Rider underway',
-//       iconStyle: Colors.green,
-//       content: Align(
-//         alignment: Alignment.centerLeft,
-//         child: Text('3/3/2023 11:25 Parcel Sorted'),
-//       ),
-//     ),
-//     const step.Step(
-//       shimmer: false,
-//       title: 'Rider is at address',
-//       iconStyle: Colors.green,
-//       content: Align(
-//         alignment: Alignment.centerLeft,
-//         child: Text('3/3/2023 11:25 Parcel has Arrived at address'),
-//       ),
-//     ),
-//   ];
+  Widget _buildTimeline() {
+    // Debug print for status
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     getStatus();
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          _buildTimelineTile(
+            isFirst: true,
+            isLast: false,
+            title: 'Order Placed (Status: Placed)',
+            time: DateTime.now().toString(),
+            isCompleted: true,
+            isActive: status == 'normal',
+          ),
+          _buildTimelineTile(
+            isFirst: false,
+            isLast: false,
+            title: 'Order Packed (Status: packed)',
+            time: DateTime.now().toString(),
+            isCompleted: status == 'packed' || status == 'ended',
+            isActive: status == 'packed',
+          ),
+          _buildTimelineTile(
+            isFirst: false,
+            isLast: false,
+            title: 'Rider Underway (Status: delivering)',
+            time: DateTime.now().toString(),
+            isCompleted: status == 'ended',
+            isActive: status == 'delivering',
+          ),
+          _buildTimelineTile(
+            isFirst: false,
+            isLast: true,
+            title: 'Delivered (Status: ended)',
+            time: DateTime.now().toString(),
+            isCompleted: status == 'ended',
+            isActive: false,
+          ),
+        ],
+      ),
+    );
+  }
 
-//     print('okay');
-//     print(status);
-//     print('workded');
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: SimpleAppBar(title: 'Track Parcel'),
-//       body: SingleChildScrollView(child: content()),
-//     );
-//   }
-
-//   Widget content() {
-//     return Column(
-//       children: [
-//         Container(
-//           height: 300,
-//           decoration: const BoxDecoration(
-//               color: Colors.white,
-//               borderRadius: BorderRadius.only(
-//                 bottomLeft: Radius.circular(50),
-//                 bottomRight: Radius.circular(50),
-//               )),
-//           child: Align(
-//             alignment: Alignment.center,
-//             child: Padding(
-//               padding: const EdgeInsets.only(top: 30.0),
-//               child: Column(children: [
-//                 Image.network(
-//                   'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcT6Yc_N3xC9akfMD4yRs9kwCBKoaRrie9z-Rg&usqp=CAU',
-//                   height: 200,
-//                 ),
-//                 const Text(
-//                   'Parcel Tracker',
-//                   style: TextStyle(
-//                     fontSize: 30,
-//                   ),
-//                 )
-//               ]),
-//             ),
-//           ),
-//         ),
-//         body()
-//       ],
-//     );
-//   }
-
-//   Widget body() {
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         const SizedBox(height: 50),
-//         const Padding(
-//           padding: EdgeInsets.only(left: 35),
-//           child: Text(
-//             'Tracking Number :',
-//             style: TextStyle(fontSize: 16),
-//           ),
-//         ),
-//         const SizedBox(
-//           height: 10,
-//         ),
-//         Padding(
-//           padding: const EdgeInsets.fromLTRB(30, 0, 20, 0),
-//           child: Row(
-//             children: [
-//               Container(
-//                 height: 50,
-//                 width: 280,
-//                 decoration: BoxDecoration(
-//                   color: Colors.white,
-//                   borderRadius: BorderRadius.circular(50),
-//                 ),
-//                 child: const TextField(
-//                   decoration: InputDecoration(
-//                       border: OutlineInputBorder(
-//                         borderSide: BorderSide.none,
-//                       ),
-//                       hintText: 'eg #12344556677765'),
-//                 ),
-//               ),
-//               const SizedBox(width: 10),
-//               const Icon(
-//                 Icons.search,
-//                 color: Colors.amber,
-//                 size: 40,
-//               ),
-//             ],
-//           ),
-//         ),
-//         const SizedBox(
-//           height: 20,
-//         ),
-//         Padding(
-//           padding: const EdgeInsets.fromLTRB(35, 2, 31, 0),
-//           child: Row(
-//             children: const [
-//               Text(
-//                 'Result :',
-//                 style: TextStyle(fontSize: 25),
-//               ),
-//               Spacer(),
-//               Icon(
-//                 Icons.close,
-//                 size: 25,
-//               ),
-//             ],
-//           ),
-//         ),
-//         const SizedBox(
-//           height: 5,
-//         ),
-
-//         Padding(
-//           padding: const EdgeInsets.fromLTRB(15, 2, 15, 0),
-//           child: Column(
-//             children: [
-//               status == 'normal'
-//                   ? VerticalStepper(
-//                       steps: steps,
-//                       dashLength: 2,
-//                     )
-//                   : status == 'packed'
-//                       ? VerticalStepper(
-//                           steps: steps2,
-//                           dashLength: 2,
-//                         )
-//                       : status == 'ended'
-//                           ? VerticalStepper(
-//                               steps: steps3,
-//                               dashLength: 2,
-//                             )
-//                           : const SizedBox(),
-//             ],
-//           ),
-//         )
-//         // : Transform(
-//         //     transform: Matrix4.translationValues(0, -50, 0),
-//         //     child: Lottie.network(
-//         //         'https://assets2.lottiefiles.com/packages/lf20_t24tpvcu.json'),
-//         //   ),
-//       ],
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: SimpleAppBar(title: 'Track Order'),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Colors.amber,
+              ),
+            )
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(30),
+                        bottomRight: Radius.circular(30),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Order #${widget.orderID}',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Estimated Delivery: ${DateTime.now().add(const Duration(days: 2)).toString().split(' ')[0]}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildTimeline(),
+                ],
+              ),
+            ),
+    );
+  }
+}
