@@ -8,8 +8,6 @@ import '../models/items.dart';
 import '../models/menu_model.dart';
 import '../widget/appbar.dart';
 import '../widget/items_design.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../authentication/auth_screen.dart';
 
 class ItemsScreen extends StatefulWidget {
   // ItemsScreen({Sellers? model});
@@ -47,73 +45,8 @@ class _ItemsScreenState extends State<ItemsScreen>
     super.dispose();
   }
 
-  void _handleProtectedFeature(BuildContext context, VoidCallback action) {
-    if (FirebaseAuth.instance.currentUser == null) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Login Required'),
-          content: const Text('Please login to access this feature.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AuthScreen()),
-                );
-              },
-              child: const Text('Login', style: TextStyle(color: Colors.amber)),
-            ),
-          ],
-        ),
-      );
-    } else {
-      action();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (FirebaseAuth.instance.currentUser == null) {
-      return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.lock_outline, size: 64, color: Colors.amber),
-              const SizedBox(height: 16),
-              const Text(
-                'Login Required',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Please login to view menu items',
-                style: TextStyle(color: Colors.grey),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AuthScreen()),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                ),
-                child: const Text('Login'),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: MyAppBar(sellerUID: widget.model!.sellerUID),

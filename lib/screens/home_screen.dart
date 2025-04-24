@@ -327,37 +327,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
   }
 
-  // Add this method to handle protected features
-  void _handleProtectedFeature(BuildContext context, VoidCallback action) {
-    if (firebaseAuth.currentUser == null) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Login Required'),
-          content: const Text('Please login to access this feature.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AuthScreen()),
-                );
-              },
-              child: const Text('Login', style: TextStyle(color: Colors.amber)),
-            ),
-          ],
-        ),
-      );
-    } else {
-      action();
-    }
-  }
-
   void _showNotificationCard() {
     showGeneralDialog(
       context: context,

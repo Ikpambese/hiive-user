@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../authentication/forgot_password_screen.dart';
 import 'custom_text_field.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -30,7 +29,7 @@ class LoginScreen extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         CustomTextField(
-          data: Icons.lock,
+          data: Icons.lock_outline_rounded,
           controller: passwordController,
           hintText: 'Password',
           isObscure: true,
@@ -60,20 +59,6 @@ class LoginScreen extends StatelessWidget {
             style: TextStyle(color: Colors.amber),
           ),
         ),
-        // const SizedBox(height: 16),
-        // TextButton(
-        //   onPressed: () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (context) => const ForgotPasswordScreen()),
-        //     );
-        //   },
-        //   child: const Text(
-        //     'Forgot password? Reset here',
-        //     style: TextStyle(color: Colors.amber),
-        //   ),
-        // ),
       ],
     );
   }

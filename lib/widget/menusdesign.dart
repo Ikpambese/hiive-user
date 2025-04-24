@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable, library_private_types_in_public_api
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
@@ -9,16 +7,15 @@ import '../screens/items_screen.dart';
 class MenusDesignWidget extends StatefulWidget {
   final Menus? model;
   final BuildContext? context;
-  final Function(BuildContext, VoidCallback)? handleProtectedFeature;
 
   const MenusDesignWidget({
     super.key,
     this.model,
     this.context,
-    this.handleProtectedFeature,
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _MenusDesignWidgetState createState() => _MenusDesignWidgetState();
 }
 

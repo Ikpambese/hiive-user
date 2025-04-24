@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'custom_text_field.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   final TextEditingController nameController;
   final TextEditingController emailController;
   final TextEditingController passwordController;
+  final TextEditingController confirmPasswordController;
   final TextEditingController phoneController;
   final TextEditingController addressController;
   final bool isLoading;
@@ -19,6 +20,7 @@ class RegisterScreen extends StatelessWidget {
     required this.nameController,
     required this.emailController,
     required this.passwordController,
+    required this.confirmPasswordController,
     required this.phoneController,
     required this.addressController,
     required this.isLoading,
@@ -30,63 +32,138 @@ class RegisterScreen extends StatelessWidget {
   });
 
   @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  bool obscurePassword = true;
+  // Remove this line as we should use the controller from widget
+  // TextEditingController confirmPasswordController = TextEditingController();
+  bool obscureConfirmPassword = true;
+
+  @override
+  void dispose() {
+    // Remove this line since we don't own this controller anymore
+    // confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  bool validatePasswords() {
+    if (widget.passwordController.text.isEmpty ||
+        widget.confirmPasswordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter both passwords'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return false;
+    }
+
+    if (widget.passwordController.text != widget.confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Passwords do not match'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return false;
+    }
+
+    if (widget.passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password must be at least 6 characters'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         GestureDetector(
-          onTap: onPickImage,
-          child: CircleAvatar(
-            radius: 60,
-            backgroundColor: Colors.grey[200],
-            backgroundImage: imageUrl != null ? NetworkImage(imageUrl!) : null,
-            child: imageUrl == null
-                ? const Icon(Icons.add_a_photo, size: 40, color: Colors.grey)
-                : null,
+          onTap: widget.onPickImage,
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: 60,
+                backgroundColor: Colors.grey[200],
+                backgroundImage: widget.imageUrl != null
+                    ? NetworkImage(widget.imageUrl!)
+                    : null,
+                child: widget.imageUrl == null
+                    ? const Icon(Icons.add_a_photo,
+                        size: 40, color: Colors.grey)
+                    : null,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '(Optional) Tap to add profile photo',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 12,
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 16),
         CustomTextField(
           data: Icons.person,
-          controller: nameController,
+          controller: widget.nameController,
           hintText: 'Name',
           isObscure: false,
         ),
         const SizedBox(height: 16),
         CustomTextField(
           data: Icons.email,
-          controller: emailController,
+          controller: widget.emailController,
           hintText: 'Email',
           isObscure: false,
         ),
         const SizedBox(height: 16),
         CustomTextField(
-          data: Icons.lock,
-          controller: passwordController,
+          data: Icons.lock_outline_rounded,
+          controller: widget.passwordController,
           hintText: 'Password',
           isObscure: true,
         ),
         const SizedBox(height: 16),
         CustomTextField(
+          data: Icons.lock_outline_rounded,
+          controller: widget.confirmPasswordController,  // Use the widget's controller
+          hintText: 'Confirm Password',
+          isObscure: true,
+        ),
+        const SizedBox(height: 16),
+        CustomTextField(
           data: Icons.phone,
-          controller: phoneController,
+          controller: widget.phoneController,
           hintText: 'Phone',
           isObscure: false,
         ),
         const SizedBox(height: 16),
         CustomTextField(
           data: Icons.location_on,
-          controller: addressController,
+          controller: widget.addressController,
           hintText: 'Address',
           isObscure: false,
           enabled: false,
         ),
         const SizedBox(height: 16),
         ElevatedButton.icon(
-          onPressed: onPickLocation,
-          icon: const Icon(Icons.my_location),
-          label: const Text('Get Current Location'),
+          onPressed: widget.onPickLocation,
+          icon: const Icon(Icons.location_on),
+          label: const Text('Pick Location (Optional)'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.amber,
+            backgroundColor: Colors.grey[300],
+            foregroundColor: Colors.black87,
           ),
         ),
         const SizedBox(height: 24),
@@ -94,21 +171,27 @@ class RegisterScreen extends StatelessWidget {
           width: double.infinity,
           height: 50,
           child: ElevatedButton(
-            onPressed: isLoading ? null : onSubmit,
+            onPressed: widget.isLoading
+                ? null
+                : () {
+                    if (validatePasswords()) {
+                      widget.onSubmit();
+                    }
+                  },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.amber,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25),
               ),
             ),
-            child: isLoading
+            child: widget.isLoading
                 ? const CircularProgressIndicator(color: Colors.white)
                 : const Text('Register'),
           ),
         ),
         const SizedBox(height: 16),
         TextButton(
-          onPressed: onToggleAuth,
+          onPressed: widget.onToggleAuth,
           child: const Text(
             'Already have an account? Login',
             style: TextStyle(color: Colors.amber),

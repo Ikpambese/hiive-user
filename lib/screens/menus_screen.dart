@@ -9,8 +9,6 @@ import '../assistants/cartitem_counter.dart';
 import '../models/menu_model.dart';
 import '../models/sellers.dart';
 import '../widget/menusdesign.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../authentication/auth_screen.dart';
 
 class MenusScreen extends StatefulWidget {
   final Sellers? model;
@@ -25,37 +23,6 @@ class _MenusScreenState extends State<MenusScreen>
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
   final ScrollController _scrollController = ScrollController();
-
-  // Add the protected feature handler
-  void _handleProtectedFeature(BuildContext context, VoidCallback action) {
-    if (FirebaseAuth.instance.currentUser == null) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Login Required'),
-          content: const Text('Please login to access this feature.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AuthScreen()),
-                );
-              },
-              child: const Text('Login', style: TextStyle(color: Colors.amber)),
-            ),
-          ],
-        ),
-      );
-    } else {
-      action();
-    }
-  }
 
   @override
   void initState() {
@@ -97,12 +64,12 @@ class _MenusScreenState extends State<MenusScreen>
           ),
         ),
         leading: IconButton(
-          onPressed: () => _handleProtectedFeature(context, () {
+          onPressed: () {
             clearCartNow(context);
             Provider.of<CartItemCounter>(context, listen: false)
                 .displayCartListItemsNumber();
             Navigator.pop(context);
-          }),
+          },
           icon:
               const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
         ),
@@ -212,7 +179,6 @@ class _MenusScreenState extends State<MenusScreen>
                       child: MenusDesignWidget(
                         model: model,
                         context: context,
-                        handleProtectedFeature: _handleProtectedFeature,
                       ),
                     );
                   }),
@@ -223,24 +189,7 @@ class _MenusScreenState extends State<MenusScreen>
           ),
         ],
       ),
-      floatingActionButton: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('sellers')
-            .doc(widget.model!.sellerUID)
-            .collection('menus')
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) return Container();
-          return FloatingActionButton.extended(
-            onPressed: () => _handleProtectedFeature(context, () {
-              // Add your cart navigation logic here
-            }),
-            backgroundColor: Colors.amber,
-            icon: const Icon(Icons.shopping_cart),
-            label: const Text('Cart'),
-          );
-        },
-      ),
+      // Remove the floating action button
     );
   }
 

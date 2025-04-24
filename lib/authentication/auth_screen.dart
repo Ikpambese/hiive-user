@@ -120,6 +120,7 @@ class _AuthScreenState extends State<AuthScreen>
                           nameController: nameController,
                           emailController: emailController,
                           passwordController: passwordController,
+                          confirmPasswordController: confirmPasswordController,
                           phoneController: phoneController,
                           addressController: addressController,
                           isLoading: isLoading,
@@ -144,6 +145,9 @@ class _AuthScreenState extends State<AuthScreen>
   }
 
   void _handleSubmit() async {
+    print(passwordController.text);
+    print(confirmPasswordController.text);
+    print(confirmPasswordController.text == passwordController.text);
     if (_formKey.currentState!.validate()) {
       setState(() {
         isLoading = true;
@@ -247,18 +251,15 @@ class _AuthScreenState extends State<AuthScreen>
     final context = this.context;
 
     try {
+      if (!_formKey.currentState!.validate()) {
+        return;
+      }
+
+      if (passwordController.text != confirmPasswordController.text) {
+        throw 'Passwords do not match';
+      }
+
       setState(() => isLoading = true);
-
-      // Validate required fields first
-      if (imageUrl == null) {
-        print(imageUrl);
-        throw 'Please select a profile image';
-      }
-      if (selectedLocation == null) {
-        throw 'Please select your location';
-      }
-
-//
 
       // Create user account first
       final userCredential =
@@ -269,27 +270,28 @@ class _AuthScreenState extends State<AuthScreen>
 
       if (userCredential.user != null) {
         // Create user document reference
-        print(imageUrl);
-
         final userRef = FirebaseFirestore.instance
             .collection("users")
             .doc(userCredential.user!.uid);
 
-        // Prepare user data
+        // Prepare user data with optional image URL
         final userData = {
           "userUID": userCredential.user!.uid,
           "userEmail": userCredential.user!.email,
           "userName": nameController.text.trim(),
-          "userAvatarUrl": imageUrl,
+          "userAvatarUrl": imageUrl ?? '', // Make image URL optional
           "userPhone": phoneController.text.trim(),
           "userAddress": addressController.text.trim(),
           "userSatus": "approved",
           "userCart": ["garbageValue"],
           "createdAt": FieldValue.serverTimestamp(),
         };
-        print('HER IS THE SIGN UP SHIT');
-        print(userData.entries.first);
-        print(imageUrl);
+
+        // Add location data only if it's selected
+        if (selectedLocation != null) {
+          userData["location"] = selectedLocation;
+        }
+
         // Save to Firestore
         await userRef.set(userData);
 
@@ -299,7 +301,8 @@ class _AuthScreenState extends State<AuthScreen>
           sharedPreferences!.setString("uid", userCredential.user!.uid),
           sharedPreferences!.setString("email", userCredential.user!.email!),
           sharedPreferences!.setString("name", nameController.text.trim()),
-          sharedPreferences!.setString("photoUrl", imageUrl!),
+          if (imageUrl != null)
+            sharedPreferences!.setString("photoUrl", imageUrl!),
           sharedPreferences!.setStringList("userCart", ["garbageValue"]),
           sharedPreferences!
               .setString("address", addressController.text.trim()),

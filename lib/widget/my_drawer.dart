@@ -93,9 +93,13 @@ class _MyDrawerState extends State<MyDrawer>
                           backgroundColor: Colors.amber,
                           child: CircleAvatar(
                             radius: 75,
-                            backgroundImage: NetworkImage(
-                              sharedPreferences!.getString('photoUrl')!,
-                            ),
+                            backgroundColor: Colors.grey[200],
+                            backgroundImage: sharedPreferences?.getString('photoUrl') != null
+                                ? NetworkImage(sharedPreferences!.getString('photoUrl')!)
+                                : null,
+                            child: sharedPreferences?.getString('photoUrl') == null
+                                ? const Icon(Icons.person, size: 40, color: Colors.grey)
+                                : null,
                           ),
                         ),
                       ),
@@ -104,7 +108,7 @@ class _MyDrawerState extends State<MyDrawer>
                     AnimatedTextKit(
                       animatedTexts: [
                         TypewriterAnimatedText(
-                          sharedPreferences!.getString('name')!.toUpperCase(),
+                          (sharedPreferences?.getString('name') ?? 'Guest User').toUpperCase(),
                           textStyle: const TextStyle(
                             color: Colors.amber,
                             fontSize: 24,
