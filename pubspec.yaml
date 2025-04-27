@@ -73,6 +73,7 @@ dependencies:
   firebase_app_check: ^0.3.2+3
   audioplayers: ^6.2.0
   timeline_tile: ^2.0.0
+  flutter_inappwebview: ^6.1.5  # Update to latest version
   
   
 
