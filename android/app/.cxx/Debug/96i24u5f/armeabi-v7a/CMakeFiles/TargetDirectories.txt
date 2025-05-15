@@ -1,0 +1,2 @@
+/Users/user/Desktop/HIIVE/hiive-user/android/app/.cxx/Debug/96i24u5f/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/user/Desktop/HIIVE/hiive-user/android/app/.cxx/Debug/96i24u5f/armeabi-v7a/CMakeFiles/rebuild_cache.dir

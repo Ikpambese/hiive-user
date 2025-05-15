@@ -154,16 +154,20 @@ class _AddressDesignState extends State<AddressDesign>
                                   child: ElevatedButton.icon(
                                     onPressed: () {
                                       OyaPay(
-                                        logistics: sharedPreferences!.getInt('logistics')!,
+                                        logistics: sharedPreferences!
+                                            .getInt('logistics')!,
                                         ctx: context,
                                         price: widget.totalAmount!.toInt(),
-                                        email: sharedPreferences!.getString('email')!,
-                                      ).handlePaymentInitialization((bool success) {
+                                        email: sharedPreferences!
+                                            .getString('email')!,
+                                      ).handlePaymentInitialization(
+                                          (bool success) {
                                         if (success) {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => PlacedOrderScreen(
+                                              builder: (context) =>
+                                                  PlacedOrderScreen(
                                                 addressID: widget.addressID,
                                                 totalAmount: widget.totalAmount,
                                                 sellerUID: widget.sellerUID,
@@ -194,7 +198,8 @@ class _AddressDesignState extends State<AddressDesign>
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.amber,
                                       foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
@@ -205,24 +210,54 @@ class _AddressDesignState extends State<AddressDesign>
                                 Expanded(
                                   child: ElevatedButton.icon(
                                     onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => PlacedOrderScreen(
-                                            addressID: widget.addressID,
-                                            totalAmount: widget.totalAmount,
-                                            sellerUID: widget.sellerUID,
-                                            paymentMethod: 'Online',  // Add this line
-                                          ),
+                                      // Show confirmation dialog for Pay on Delivery
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: const Text(
+                                              "Pay on Delivery Notice"),
+                                          content: const Text(
+                                              "Pay on Delivery includes an additional charge of ₦500. Do you wish to continue?"),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text("Cancel"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PlacedOrderScreen(
+                                                      addressID:
+                                                          widget.addressID,
+                                                      totalAmount:
+                                                          (widget.totalAmount! +
+                                                              500),
+                                                      sellerUID:
+                                                          widget.sellerUID,
+                                                      paymentMethod: 'Cash',
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: const Text("Continue"),
+                                            ),
+                                          ],
                                         ),
                                       );
                                     },
                                     icon: const Icon(Icons.delivery_dining),
-                                    label: const Text('Pay on Delivery'),
+                                    label:
+                                        const Text('Pay on Delivery (+₦500)'),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.grey[800],
                                       foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),

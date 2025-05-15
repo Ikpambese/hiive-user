@@ -1,0 +1,2 @@
+/Users/user/Desktop/HIIVE/hiive-user/android/app/.cxx/RelWithDebInfo/t326o3ux/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/user/Desktop/HIIVE/hiive-user/android/app/.cxx/RelWithDebInfo/t326o3ux/armeabi-v7a/CMakeFiles/rebuild_cache.dir
