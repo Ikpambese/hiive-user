@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hiiveuser/delivery/ticket.dart';
 import 'package:hiiveuser/global/global.dart';
-
 import 'package:audioplayers/audioplayers.dart';
 
 class DeliveryPage extends StatefulWidget {
