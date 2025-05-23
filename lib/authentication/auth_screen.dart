@@ -31,6 +31,7 @@ class _AuthScreenState extends State<AuthScreen>
   TextEditingController nameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+  String? selectedState; // Add this line
   GeoPoint? selectedLocation;
   String? imageUrl;
 
@@ -71,7 +72,7 @@ class _AuthScreenState extends State<AuthScreen>
                   // Logo Animation
                   Container(
                     height: 220,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       image: DecorationImage(
                         image: AssetImage('images/honeycomb.png'),
                         fit: BoxFit.contain,
@@ -125,9 +126,15 @@ class _AuthScreenState extends State<AuthScreen>
                           addressController: addressController,
                           isLoading: isLoading,
                           imageUrl: imageUrl,
+                          selectedState: selectedState,
                           onPickImage: _pickImage,
                           onPickLocation: _pickLocation,
                           onSubmit: _handleSubmit,
+                          onStateSelected: (String state) {  // Add this line
+                            setState(() {
+                              selectedState = state;
+                            });
+                          },
                           onToggleAuth: () {
                             setState(() {
                               isLogin = true;
@@ -145,9 +152,6 @@ class _AuthScreenState extends State<AuthScreen>
   }
 
   void _handleSubmit() async {
-    print(passwordController.text);
-    print(confirmPasswordController.text);
-    print(confirmPasswordController.text == passwordController.text);
     if (_formKey.currentState!.validate()) {
       setState(() {
         isLoading = true;
@@ -255,6 +259,10 @@ class _AuthScreenState extends State<AuthScreen>
         return;
       }
 
+      if (selectedState == null) {
+        throw 'Please select a state';
+      }
+
       if (passwordController.text != confirmPasswordController.text) {
         throw 'Passwords do not match';
       }
@@ -282,6 +290,7 @@ class _AuthScreenState extends State<AuthScreen>
           "userAvatarUrl": imageUrl ?? '', // Make image URL optional
           "userPhone": phoneController.text.trim(),
           "userAddress": addressController.text.trim(),
+          "userState": selectedState, // This will now be guaranteed non-null
           "userSatus": "approved",
           "userCart": ["garbageValue"],
           "createdAt": FieldValue.serverTimestamp(),

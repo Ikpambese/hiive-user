@@ -41,12 +41,26 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     if (firebaseAuth.currentUser != null) {
       restrictctBlockedeUser();
       clearCartNow(context);
+      getUserState(); // Add this line
       getCompany().then((_) {
         if (mounted && sharedPreferences?.getString('message') != null) {
           _showNotificationCard();
         }
       });
     }
+  }
+
+  // Add this new method
+  Future<void> getUserState() async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(firebaseAuth.currentUser!.uid)
+        .get()
+        .then((snapshot) {
+      if (snapshot.exists && snapshot.data()!.containsKey('userState')) {
+        sharedPreferences?.setString('userState', snapshot.data()!['userState']);
+      }
+    });
   }
 
   @override
@@ -230,6 +244,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               stream: FirebaseFirestore.instance
                   .collection("sellers")
                   .where('sellerSatus', isEqualTo: 'approved')
+                  .where('sellerState',
+                      isEqualTo: sharedPreferences?.getString('userState'))
                   .snapshots(),
               builder: (context, snapshot) {
                 return !snapshot.hasData

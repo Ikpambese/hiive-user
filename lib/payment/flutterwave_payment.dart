@@ -20,7 +20,6 @@ class OyaPay {
   Future<void> handlePaymentInitialization(void Function(bool) callback) async {
     final Customer customer = Customer(email: email);
     final realPrice = price! + logistics;
-    print(realPrice);
     final Flutterwave flutterwave = Flutterwave(
       //ctx: context,
       // Fixed: using correct parameter name 'ctx'
