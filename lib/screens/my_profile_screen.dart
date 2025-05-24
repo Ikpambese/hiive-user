@@ -25,6 +25,48 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   bool _isDarkMode = false;
   bool _isLoading = false;
   String? _imageUrl;
+  String? _selectedState;
+
+  // Add Nigerian states list
+  final List<String> nigerianStates = [
+    'Abia',
+    'Adamawa',
+    'Akwa Ibom',
+    'Anambra',
+    'Bauchi',
+    'Bayelsa',
+    'Benue',
+    'Borno',
+    'Cross River',
+    'Delta',
+    'Ebonyi',
+    'Edo',
+    'Ekiti',
+    'Enugu',
+    'FCT',
+    'Gombe',
+    'Imo',
+    'Jigawa',
+    'Kaduna',
+    'Kano',
+    'Katsina',
+    'Kebbi',
+    'Kogi',
+    'Kwara',
+    'Lagos',
+    'Nasarawa',
+    'Niger',
+    'Ogun',
+    'Ondo',
+    'Osun',
+    'Oyo',
+    'Plateau',
+    'Rivers',
+    'Sokoto',
+    'Taraba',
+    'Yobe',
+    'Zamfara'
+  ];
 
   @override
   void initState() {
@@ -38,6 +80,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     _phoneController.text = sharedPreferences!.getString('phone') ?? '';
     _addressController.text = sharedPreferences!.getString('address') ?? '';
     _imageUrl = sharedPreferences!.getString('photoUrl');
+    _selectedState = sharedPreferences!.getString('userState');
   }
 
   Future<void> _updateProfile() async {
@@ -51,12 +94,14 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         'userName': _nameController.text,
         'userPhone': _phoneController.text,
         'userAddress': _addressController.text,
+        'userState': _selectedState,
         if (_imageUrl != null) 'userAvatarUrl': _imageUrl,
       });
 
       await sharedPreferences!.setString('name', _nameController.text);
       await sharedPreferences!.setString('phone', _phoneController.text);
       await sharedPreferences!.setString('address', _addressController.text);
+      await sharedPreferences!.setString('userState', _selectedState ?? '');
       if (_imageUrl != null) {
         await sharedPreferences!.setString('photoUrl', _imageUrl!);
       }
@@ -107,7 +152,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Profile'),
-        content: const Text('Are you sure you want to delete your profile? This action cannot be undone.'),
+        content: const Text(
+            'Are you sure you want to delete your profile? This action cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -135,9 +181,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           // Delete profile picture from Storage if exists
           if (_imageUrl != null) {
             try {
-              await FirebaseStorage.instance
-                  .refFromURL(_imageUrl!)
-                  .delete();
+              await FirebaseStorage.instance.refFromURL(_imageUrl!).delete();
             } catch (e) {
               // Handle storage deletion error
             }
@@ -145,7 +189,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
           // Clear shared preferences
           await sharedPreferences!.clear();
-          
+
           // Navigate to auth screen and remove all previous routes
           if (mounted) {
             Navigator.pushAndRemoveUntil(
@@ -248,6 +292,35 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               isObscure: false,
               enabled: _isEditing,
             ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  value: _selectedState,
+                  hint: const Text('Select State'),
+                  items: nigerianStates.map((String state) {
+                    return DropdownMenuItem<String>(
+                      value: state,
+                      child: Text(state),
+                    );
+                  }).toList(),
+                  onChanged: _isEditing
+                      ? (String? newValue) {
+                          setState(() {
+                            _selectedState = newValue;
+                          });
+                        }
+                      : null,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -277,10 +350,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () => setState(() => _isEditing = false),
-                child: const Text('Cancel', style: TextStyle(color: Colors.red)),
+                child:
+                    const Text('Cancel', style: TextStyle(color: Colors.red)),
               ),
             ],
-            
+
             // Add Delete Profile Button
             const SizedBox(height: 32),
             TextButton.icon(
@@ -294,7 +368,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ),
               ),
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                   side: const BorderSide(color: Colors.red),

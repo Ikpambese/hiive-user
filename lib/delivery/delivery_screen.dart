@@ -1,8 +1,9 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hiiveuser/delivery/ticket.dart';
 import 'package:hiiveuser/global/global.dart';
-
 import 'package:audioplayers/audioplayers.dart';
 
 class DeliveryPage extends StatefulWidget {
@@ -108,20 +109,25 @@ class _DeliveryPageState extends State<DeliveryPage>
           actions: [
             Container(
               margin: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
                     color: Color.fromRGBO(0, 0, 0, 0.1),
                     blurRadius: 10,
-                    offset: const Offset(0, 2),
+                    offset: Offset(0, 2),
                   ),
                 ],
               ),
               child: CircleAvatar(
-                backgroundImage: NetworkImage(
-                  sharedPreferences!.getString('photoUrl')!,
-                ),
+                backgroundColor: Colors.amber,
+                child: sharedPreferences?.getString('photoUrl') == null
+                    ? const Icon(Icons.person, color: Colors.white)
+                    : CircleAvatar(
+                        backgroundImage: NetworkImage(
+                          sharedPreferences!.getString('photoUrl')!,
+                        ),
+                      ),
               ),
             ),
           ],
@@ -131,11 +137,11 @@ class _DeliveryPageState extends State<DeliveryPage>
           children: [
             Container(
               color: Colors.white,
-              child: TabBar(
+              child: const TabBar(
                 indicatorColor: Colors.amber,
                 labelColor: Colors.amber,
                 unselectedLabelColor: Colors.grey,
-                tabs: const [
+                tabs: [
                   Tab(
                     icon: Icon(Icons.local_shipping_outlined),
                     text: "New Delivery",
@@ -323,7 +329,7 @@ class _DeliveryPageState extends State<DeliveryPage>
           if (isBot)
             Container(
               margin: const EdgeInsets.only(right: 8),
-              child: CircleAvatar(
+              child: const CircleAvatar(
                 backgroundColor: Colors.amber,
                 radius: 15,
                 child: Icon(Icons.support_agent, color: Colors.white, size: 20),
@@ -401,7 +407,8 @@ class _DeliveryPageState extends State<DeliveryPage>
           // Add this confirmation message when all questions are answered
           chatHistory.add({
             'type': 'bot',
-            'message': "Great! All information has been collected.\n\nPlease type 'yes' to create your delivery ticket or any other response to cancel.",
+            'message':
+                "Great! All information has been collected.\n\nPlease type 'yes' to create your delivery ticket or any other response to cancel.",
           });
         }
       } else if (userInput.toLowerCase() == 'yes') {
@@ -409,7 +416,8 @@ class _DeliveryPageState extends State<DeliveryPage>
       } else {
         chatHistory.add({
           'type': 'bot',
-          'message': "❗ Please type 'yes' to confirm and create the delivery ticket, or provide a different response to cancel.",
+          'message':
+              "❗ Please type 'yes' to confirm and create the delivery ticket, or provide a different response to cancel.",
         });
       }
     });

@@ -76,7 +76,7 @@ class TrackingCard extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.blue.shade700,
+        color: Colors.amber.shade700,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -142,7 +142,7 @@ class TrackingCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '₦${bill!.toStringAsFixed(2)}',
+                  '₦${(sharedPreferences!.getInt('logistics')! + bill!.toInt()).toStringAsFixed(2)}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,

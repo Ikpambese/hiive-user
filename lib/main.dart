@@ -15,7 +15,7 @@ import 'providers/theme_provider.dart';
 
 void initializeNotifications() async {
   await FlutterLocalNotificationsPlugin().initialize(
-    InitializationSettings(
+    const InitializationSettings(
       iOS: DarwinInitializationSettings(
         requestAlertPermission: true,
         requestBadgePermission: true,
