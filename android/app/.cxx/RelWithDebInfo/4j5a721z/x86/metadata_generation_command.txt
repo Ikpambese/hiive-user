@@ -1,0 +1,20 @@
+                        -H/Users/kxtor/.shorebird/bin/cache/flutter/fb8d194ceb0794310387baff34d657edad7219b8/packages/flutter_tools/gradle/src/main/groovy
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=23
+-DANDROID_PLATFORM=android-23
+-DANDROID_ABI=x86
+-DCMAKE_ANDROID_ARCH_ABI=x86
+-DANDROID_NDK=/Users/kxtor/Library/Android/sdk/ndk/26.3.11579264
+-DCMAKE_ANDROID_NDK=/Users/kxtor/Library/Android/sdk/ndk/26.3.11579264
+-DCMAKE_TOOLCHAIN_FILE=/Users/kxtor/Library/Android/sdk/ndk/26.3.11579264/build/cmake/android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=/Users/kxtor/Library/Android/sdk/cmake/3.22.1/bin/ninja
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/Users/kxtor/Workspace/hiive-user/build/app/intermediates/cxx/RelWithDebInfo/4j5a721z/obj/x86
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/Users/kxtor/Workspace/hiive-user/build/app/intermediates/cxx/RelWithDebInfo/4j5a721z/obj/x86
+-DCMAKE_BUILD_TYPE=RelWithDebInfo
+-B/Users/kxtor/Workspace/hiive-user/android/app/.cxx/RelWithDebInfo/4j5a721z/x86
+-GNinja
+-Wno-dev
+--no-warn-unused-cli
+                        Build command args: []
+                        Version: 2

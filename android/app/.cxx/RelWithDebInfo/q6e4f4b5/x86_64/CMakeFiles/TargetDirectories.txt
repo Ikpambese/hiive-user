@@ -1,0 +1,2 @@
+/Users/kxtor/Workspace/hiive-user/android/app/.cxx/RelWithDebInfo/q6e4f4b5/x86_64/CMakeFiles/edit_cache.dir
+/Users/kxtor/Workspace/hiive-user/android/app/.cxx/RelWithDebInfo/q6e4f4b5/x86_64/CMakeFiles/rebuild_cache.dir
