@@ -102,8 +102,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               CircleAvatar(
                 radius: 60,
                 backgroundColor: Colors.grey[200],
-                backgroundImage: widget.imageUrl != null
-                    ? NetworkImage(widget.imageUrl!)
+                backgroundImage: (widget.imageUrl != null && widget.imageUrl!.isNotEmpty) 
+                    ? NetworkImage(widget.imageUrl!) 
                     : null,
                 child: widget.imageUrl == null
                     ? const Icon(Icons.add_a_photo,

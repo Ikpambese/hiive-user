@@ -213,64 +213,72 @@ class _ItemsDesignWidgetState extends State<ItemsDesignWidget>
                     Stack(
                       alignment: Alignment.topRight,
                       children: [
-                        Hero(
-                          tag: 'item-${widget.model!.itemID}',
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.amber.withOpacity(0.2),
-                                  blurRadius: 10,
-                                  spreadRadius: 2,
+                        widget.model?.thumbnailUrl == null ||
+                                widget.model!.thumbnailUrl!.trim().isEmpty
+                            ? Container(
+                                height: 120,
+                                width: 120,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                              ],
-                            ),
-                            child: ClipOval(
-                              child: CachedNetworkImage(
+                                child: const Icon(
+                                  Icons.image_not_supported,
+                                  size: 40,
+                                  color: Colors.grey,
+                                ),
+                              )
+                            : CachedNetworkImage(
                                 imageUrl: widget.model!.thumbnailUrl!,
-                                placeholder: (context, url) =>
-                                    Shimmer.fromColors(
-                                  baseColor: Colors.grey[300]!,
-                                  highlightColor: Colors.grey[100]!,
-                                  child: Container(
-                                    width: 120,
-                                    height: 120,
-                                    color: Colors.white,
-                                  ),
+                                height: 120,
+                                width: 120,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Center(
+                                  child: CircularProgressIndicator(),
                                 ),
                                 errorWidget: (context, url, error) => Container(
-                                  width: 120,
                                   height: 120,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.grey,
-                                    shape: BoxShape.circle,
+                                  width: 120,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: const Icon(Icons.error,
-                                      color: Colors.white),
+                                  child: const Icon(
+                                    Icons.error,
+                                    size: 40,
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                                width: 120,
-                                height: 120,
-                                fit: BoxFit.cover,
                               ),
-                            ),
-                          ),
-                        ),
-                        if (widget.model!.price! < 2000)
+                        if (widget.model?.price != null &&
+                            widget.model!.price! <= 5)
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: Colors.green,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Text(
-                              'Budget Meal',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
                               ),
+                            ),
+                            padding: const EdgeInsets.all(5),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Text(
+                                  'Budget',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                                Text(
+                                  'Meal',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                       ],

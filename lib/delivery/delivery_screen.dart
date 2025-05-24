@@ -1,5 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:cached_network_image/cached_network_image.dart'
+    show CachedNetworkImage;
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hiiveuser/delivery/ticket.dart';
@@ -66,7 +68,7 @@ class _DeliveryPageState extends State<DeliveryPage>
     "What's the name of your package?",
     "What's the approximate weight of your package?",
     "Please describe your package briefly",
-    "What's the destination address?",
+    "What's the pick up address?",
     "What's your name (sender)?",
     "What's your phone number?",
     "What's the receiver's name?",
@@ -108,29 +110,40 @@ class _DeliveryPageState extends State<DeliveryPage>
           ),
           actions: [
             Container(
-              margin: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromRGBO(0, 0, 0, 0.1),
-                    blurRadius: 10,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: CircleAvatar(
-                backgroundColor: Colors.amber,
-                child: (sharedPreferences?.getString('photoUrl')?.isNotEmpty ??
-                        false)
-                    ? CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          sharedPreferences!.getString('photoUrl')!,
-                        ),
-                      )
-                    : const Icon(Icons.person, color: Colors.white),
-              ),
-            ),
+                margin: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromRGBO(0, 0, 0, 0.1),
+                      blurRadius: 10,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: CircleAvatar(
+                  backgroundColor: Colors.amber,
+                  child: (sharedPreferences
+                              ?.getString('photoUrl')
+                              ?.isNotEmpty ??
+                          false)
+                      ? CircleAvatar(
+                          child: ClipOval(
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  sharedPreferences!.getString('photoUrl')!,
+                              placeholder: (context, url) =>
+                                  const CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.person, color: Colors.white),
+                              fit: BoxFit.cover,
+                              width: 40,
+                              height: 40,
+                            ),
+                          ),
+                        )
+                      : const Icon(Icons.person, color: Colors.white),
+                )),
           ],
           centerTitle: true,
         ),

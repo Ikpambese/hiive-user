@@ -81,7 +81,9 @@ class _MenusScreenState extends State<MenusScreen>
               child: CircleAvatar(
                 backgroundColor: Colors.white,
                 radius: 20,
-                backgroundImage: NetworkImage(widget.model!.sellerAvatarUrl!),
+                backgroundImage: (widget.model?.sellerAvatarUrl != null && widget.model!.sellerAvatarUrl!.isNotEmpty) 
+                    ? NetworkImage(widget.model!.sellerAvatarUrl!) 
+                    : null,
               ),
             ),
             const SizedBox(width: 12),

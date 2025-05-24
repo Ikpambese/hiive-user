@@ -1,5 +1,7 @@
 // ignore_for_file: unused_element
 
+import 'package:cached_network_image/cached_network_image.dart'
+    show CachedNetworkImage;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -119,26 +121,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 builder: (context) => const MyProfileScreen()),
                           );
                         },
-                        child: Image.network(
-                          sharedPreferences?.getString('photoUrl') ??
-                              'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
+                        child: CachedNetworkImage(
+                          imageUrl:
+                              sharedPreferences?.getString('photoUrl') ?? '',
                           height: 40,
-                          width: 40,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              height: 40,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: const Icon(
-                                Icons.person,
-                                color: Colors.grey,
-                              ),
-                            );
-                          },
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              const CircleAvatar(
+                            backgroundColor: Colors.grey,
+                            child: Icon(Icons.person, color: Colors.white),
+                          ),
                         ),
                       ),
                     ),

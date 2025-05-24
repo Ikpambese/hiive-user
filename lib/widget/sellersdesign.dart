@@ -140,7 +140,7 @@ class _SellersDesignState extends State<SellersDesign>
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: const Icon(
-                                    Icons.restaurant_rounded,
+                                    Icons.home,
                                     color: Colors.white,
                                     size: 20,
                                   ),

@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart'
+    show CachedNetworkImage;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +12,8 @@ class OrderCard extends StatelessWidget {
   final String? orderID;
   final List<String>? seperateQuantitiesList;
 
-  const OrderCard({super.key, 
+  const OrderCard({
+    super.key,
     this.itemCount,
     this.data,
     this.orderID,
@@ -58,12 +61,18 @@ Widget placedOrderDesignWidget(
       children: [
         ClipOval(
           clipBehavior: Clip.antiAlias,
-          child: Image.network(
-            model.thumbnailUrl!,
-            width: 50,
-            height: 50,
-            fit: BoxFit.cover,
-          ),
+          child: (model.thumbnailUrl?.isNotEmpty ?? false)
+              ? CachedNetworkImage(
+                  imageUrl: model.thumbnailUrl!,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) =>
+                      const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) =>
+                      const Icon(Icons.fastfood),
+                )
+              : const Icon(Icons.fastfood, size: 50),
         ),
         const SizedBox(
           width: 10.0,
