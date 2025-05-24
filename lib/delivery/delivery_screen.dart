@@ -121,13 +121,14 @@ class _DeliveryPageState extends State<DeliveryPage>
               ),
               child: CircleAvatar(
                 backgroundColor: Colors.amber,
-                child: sharedPreferences?.getString('photoUrl') == null
-                    ? const Icon(Icons.person, color: Colors.white)
-                    : CircleAvatar(
+                child: (sharedPreferences?.getString('photoUrl')?.isNotEmpty ??
+                        false)
+                    ? CircleAvatar(
                         backgroundImage: NetworkImage(
                           sharedPreferences!.getString('photoUrl')!,
                         ),
-                      ),
+                      )
+                    : const Icon(Icons.person, color: Colors.white),
               ),
             ),
           ],

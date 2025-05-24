@@ -251,7 +251,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 if (_isEditing)
                   Container(
                     padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.amber,
                       shape: BoxShape.circle,
                     ),

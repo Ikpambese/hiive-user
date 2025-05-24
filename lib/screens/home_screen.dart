@@ -125,6 +125,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           height: 40,
                           width: 40,
                           fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Icon(
+                                Icons.person,
+                                color: Colors.grey,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -192,10 +206,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           enlargeCenterPage: true,
                         ),
                         items: [
-                          'images/1.jpg',
-                          'images/2.jpg',
-                          'images/3.jpg',
-                          'images/4.jpg',
+                          'images/28.jpg',
+                          'images/29.jpg',
+                          'images/30.jpg',
+                          'images/31.jpg',
                         ].map((index) {
                           return Container(
                             decoration: BoxDecoration(
@@ -250,12 +264,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                 // Sellers Grid
                 StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection("sellers")
-                      .where('sellerSatus', isEqualTo: 'approved')
-                      .where('sellerState',
-                          isEqualTo: sharedPreferences?.getString('userState'))
-                      .snapshots(),
+                  stream: isLoggedIn
+                      ? FirebaseFirestore.instance
+                          .collection("sellers")
+                          .where('sellerSatus', isEqualTo: 'approved')
+                          .where('sellerState',
+                              isEqualTo:
+                                  sharedPreferences?.getString('userState'))
+                          .snapshots()
+                      : FirebaseFirestore.instance
+                          .collection("sellers")
+                          .where('sellerSatus', isEqualTo: 'approved')
+                          .snapshots(),
                   builder: (context, snapshot) {
                     return !snapshot.hasData
                         ? SliverToBoxAdapter(

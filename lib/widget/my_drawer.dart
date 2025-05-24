@@ -3,8 +3,6 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:hiiveuser/global/global.dart';
 import 'package:hiiveuser/screens/my_orders_screen.dart';
 import 'package:hiiveuser/splash/splash_screen.dart';
-
-import '../authentication/auth_screen.dart';
 import '../screens/address.dart';
 import '../screens/history.dart';
 import '../screens/home_screen.dart';
@@ -95,17 +93,23 @@ class _MyDrawerState extends State<MyDrawer>
                           child: CircleAvatar(
                             radius: 75,
                             backgroundColor: Colors.grey[200],
-                            backgroundImage: sharedPreferences
-                                        ?.getString('photoUrl') !=
-                                    null
+                            backgroundImage: (sharedPreferences
+                                            ?.getString('photoUrl') !=
+                                        null &&
+                                    sharedPreferences!
+                                        .getString('photoUrl')!
+                                        .isNotEmpty)
                                 ? NetworkImage(
                                     sharedPreferences!.getString('photoUrl')!)
                                 : null,
-                            child:
-                                sharedPreferences?.getString('photoUrl') == null
-                                    ? const Icon(Icons.person,
-                                        size: 40, color: Colors.grey)
-                                    : null,
+                            child: (sharedPreferences?.getString('photoUrl') ==
+                                        null ||
+                                    sharedPreferences!
+                                        .getString('photoUrl')!
+                                        .isEmpty)
+                                ? const Icon(Icons.person,
+                                    size: 40, color: Colors.grey)
+                                : null,
                           ),
                         ),
                       ),
